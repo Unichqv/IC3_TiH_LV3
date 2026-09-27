@@ -31,11 +31,13 @@ button{cursor:pointer}
 .search{flex:1;min-width:240px;position:relative}.search input{width:100%;padding:12px 15px 12px 42px;border:1px solid #d6deeb;border-radius:12px;outline:none;background:#fff}.search:before{content:"⌕";position:absolute;left:15px;top:8px;font-size:25px;color:#8a98ad;z-index:1}
 select{padding:12px 35px 12px 14px;border:1px solid #d6deeb;border-radius:12px;background:#fff;color:#33405a;min-width:220px;outline:none}
 .table-wrap{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:auto}
-table{width:100%;border-collapse:collapse;min-width:1100px}
+table{width:100%;border-collapse:collapse;min-width:1300px}
 thead th{background:#f8fafc;border-bottom:1px solid var(--line);padding:17px 12px;text-align:center;font-size:13px;color:#41516c}
 tbody td{padding:17px 12px;border-bottom:1px solid #edf0f5;text-align:center;font-size:14px}
 tbody tr:hover{background:#fbfcff}
 td.name{text-align:left;font-weight:750;font-size:16px}.muted{color:#9aa7ba;font-style:italic}.green{color:var(--green);font-weight:800}.red{color:var(--red);font-weight:800}.purple{color:#4435df;font-weight:800}
+.rating{display:inline-block;padding:6px 9px;border-radius:9px;font-size:12px;font-weight:750;line-height:1.4;min-width:120px}
+.rating.good{background:#e9fbf3;color:#007a52}.rating.average{background:#fff7df;color:#8a6100}.rating.support{background:#fff0f2;color:#c32646}.rating.pending{background:#f1f4f8;color:#71809a}
 .action{border:0;background:none;font-size:19px;margin:0 3px;padding:5px}.edit{color:#4d3cff}.view{color:#51627c}.del{color:#ff1748}
 .empty{padding:50px;text-align:center;color:var(--muted)}
 .modal{position:fixed;inset:0;background:rgba(15,24,45,.48);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}
@@ -82,15 +84,15 @@ td.name{text-align:left;font-weight:750;font-size:16px}.muted{color:#9aa7ba;font
 
   <div class="toolbar">
     <div class="search"><input id="search" placeholder="Tìm kiếm học sinh theo tên..." oninput="render()"></div>
-    <select id="examFilter" onchange="render()"><option value="">Tất cả bài ôn luyện</option></select>
+    <select id="examFilter" onchange="render()"><option value="">— Chọn bài ôn để xem thống kê —</option></select>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>STT</th><th>HỌ VÀ TÊN</th><th>BÀI ÔN</th><th>SỐ LẦN<br>LÀM BÀI</th>
+        <th>STT</th><th>HỌ VÀ TÊN</th><th>BÀI ÔN ĐANG XEM</th><th>SỐ LẦN<br>LÀM BÀI</th>
         <th><span class="green">ĐIỂM CAO<br>NHẤT (MAX)</span></th><th><span class="red">ĐIỂM<br>THẤP NHẤT<br>(MIN)</span></th>
-        <th>ĐIỂM<br>GẦN<br>NHẤT</th><th><span class="purple">THỜI GIAN<br>NỘP BÀI<br>GẦN NHẤT</span></th><th>THAO TÁC</th>
+        <th>ĐIỂM<br>GẦN<br>NHẤT</th><th><span class="purple">THỜI GIAN<br>NỘP BÀI<br>GẦN NHẤT</span></th><th>ĐÁNH GIÁ</th><th>THAO TÁC</th>
       </tr></thead>
       <tbody id="studentTable"></tbody>
     </table>
@@ -169,13 +171,28 @@ function uniqueStudentsByName(students){
 }
 
 function statsFor(s,filter=''){
-  let ex=examsOf(s); if(filter) ex=ex.filter(e=>e.examTitle===filter);
-  const attempts=ex.flatMap(e=>e.attempts||[]);
+  const ex=examsOf(s).filter(e=>!filter||e.examTitle===filter);
+  const attempts=ex.flatMap(e=>e.attempts||[]).sort((a,b)=>new Date(a.submittedAt)-new Date(b.submittedAt));
   if(!attempts.length)return {ex,attempts,count:0,max:null,min:null,latest:null,latestAt:null,latestExam:null};
-  attempts.sort((a,b)=>new Date(a.submittedAt)-new Date(b.submittedAt));
   const scores=attempts.map(a=>Number(a.score)||0);
   const last=attempts[attempts.length-1];
   return {ex,attempts,count:attempts.length,max:Math.max(...scores),min:Math.min(...scores),latest:last.score,latestAt:last.submittedAt,latestExam:last.examTitle};
+}
+
+function evaluateStudent(stats){
+  if(!stats.count)return {className:'pending',text:'Chưa làm bài'};
+
+  const latest=Number(stats.latest)||0;
+  const first=Number(stats.attempts[0].score)||0;
+  const level=latest>=8?'Tốt':latest>=6?'Khá':latest>=5?'Đạt':'Cần hỗ trợ';
+  let progress;
+  if(stats.count===1) progress='1 lần làm';
+  else if(latest>first) progress=`Tiến bộ · ${stats.count} lần`;
+  else if(latest<first) progress=`Giảm điểm · ${stats.count} lần`;
+  else progress=`Ổn định · ${stats.count} lần`;
+
+  const className=latest>=6?'good':latest>=5?'average':'support';
+  return {className,text:`${level}<br>${progress}`};
 }
 
 function render(){
@@ -187,26 +204,36 @@ function render(){
   document.getElementById('classTitle').textContent=classFilter||'Tất cả lớp';
   document.getElementById('studentCount').textContent=`${uniqueRows.length} Học Sinh`;
   document.getElementById('statStudents').textContent=uniqueRows.length;
+
+  const tbody=document.getElementById('studentTable');
+  if(!examFilter){
+    document.getElementById('statDone').textContent='–';
+    document.getElementById('statAttempts').textContent='–';
+    document.getElementById('statAvg').textContent='–';
+    tbody.innerHTML='<tr><td colspan="10" class="empty">Vui lòng chọn bài ôn luyện để xem thống kê. Số lần làm và điểm sẽ chỉ tính cho bài đã chọn.</td></tr>';
+    return;
+  }
+
   let totalAttempts=0, done=0, latestScores=[];
   uniqueRows.forEach(s=>{
     const x=statsFor(s,examFilter);
     totalAttempts+=x.count;
-    if(x.count){done++;latestScores.push(Number(x.latest));}
+    if(x.count){done++;latestScores.push(Number(x.latest)||0);}
   });
   document.getElementById('statDone').textContent=done;
   document.getElementById('statAttempts').textContent=totalAttempts;
   document.getElementById('statAvg').textContent=latestScores.length?(latestScores.reduce((a,b)=>a+b,0)/latestScores.length).toFixed(1):'-';
 
-  const tbody=document.getElementById('studentTable');
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="9" class="empty">Không tìm thấy học sinh phù hợp với bộ lọc.</td></tr>';return}
-  tbody.innerHTML=rows.map((s,i)=>{
+  if(!uniqueRows.length){tbody.innerHTML='<tr><td colspan="10" class="empty">Không tìm thấy học sinh phù hợp với bộ lọc.</td></tr>';return}
+  tbody.innerHTML=uniqueRows.map((s,i)=>{
     const x=statsFor(s,examFilter);
-    const names=x.ex.map(e=>e.examTitle).filter(Boolean);
+    const rating=evaluateStudent(x);
     return `<tr>
       <td>${i+1}</td><td class="name">${esc(s.fullName)}</td>
-      <td class="${names.length?'':'muted'}">${names.length?esc(names.join(', ')):'Chưa làm bài'}</td>
+      <td>${esc(examFilter)}</td>
       <td>${x.count}</td><td class="green">${x.max===null?'–':fmtScore(x.max)}</td><td class="red">${x.min===null?'–':fmtScore(x.min)}</td>
       <td class="purple">${x.latest===null?'–':fmtScore(x.latest)}</td><td>${x.latestAt?fmtDate(x.latestAt):'–'}</td>
+      <td><span class="rating ${rating.className}">${rating.text}</span></td>
       <td>
         <button class="action edit" title="Sửa" onclick="editStudent('${s.studentId}')">♢</button>
         <button class="action view" title="Xem chi tiết" onclick="viewStudent('${s.studentId}')">♧</button>
@@ -218,8 +245,9 @@ function render(){
 
 function renderFilter(){
   const el=document.getElementById('examFilter'), old=el.value;
-  el.innerHTML='<option value="">Tất cả bài ôn luyện</option>'+allExamNames().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
-  el.value=allExamNames().includes(old)?old:'';
+  const names=allExamNames();
+  el.innerHTML='<option value="">— Chọn bài ôn để xem thống kê —</option>'+names.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  el.value=names.includes(old)?old:'';
 }
 
 function renderClassFilter(){
@@ -344,9 +372,10 @@ function deleteStudent(id){
 
 function viewStudent(id){
   const s=db.students.find(x=>x.studentId===id);if(!s)return;
+  const selectedExam=document.getElementById('examFilter').value;
   document.getElementById('detailTitle').textContent=s.fullName;
-  let attempts=examsOf(s).flatMap(e=>(e.attempts||[]).map(a=>({...a,examTitle:e.examTitle}))).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
-  const x=statsFor(s);
+  let attempts=examsOf(s).filter(e=>e.examTitle===selectedExam).flatMap(e=>(e.attempts||[]).map(a=>({...a,examTitle:e.examTitle}))).sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+  const x=statsFor(s,selectedExam);
   document.getElementById('detailBody').innerHTML=`
     <div class="profile">
       <div class="mini"><span>Mã học viên</span><b>${esc(s.studentId)}</b></div>
