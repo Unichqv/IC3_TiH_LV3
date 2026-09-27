@@ -1,8 +1,7 @@
 /* =========================================================
    NGÂN HÀNG CÂU HỎI
-
-   Đổi type để chọn dạng câu hỏi. Các dạng được hỗ trợ:
-   multiple-choice, radio, visual-choice, fill-in-blank,
+   Mỗi câu hỏi được khai báo trực tiếp trong quiz.questions.
+   Các dạng: multiple-choice, radio, visual-choice, fill-in-blank,
    multiple-select, matching, binary, process-order.
 ========================================================= */
 
@@ -11,134 +10,390 @@ const quiz = {
   title: "NỘI DUNG BÀI HỌC CĐ3",
   questions: [
     {
+      type: "fill-in-blank",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Dòng chữ “39°C” chưa được giải thích trên ứng dụng thời tiết được gọi là ____.",
+      answers: ["dữ liệu"],
+      explain: "Dữ liệu là các con số, văn bản, hình ảnh thô chưa qua xử lý hay giải thích cụ thể."
+    },
+    {
       type: "radio",
       category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Câu 1. Tình huống nào sau đây thể hiện đúng quá trình từ dữ liệu → thông tin → kiến thức?",
-      options: [
-        "Nam nhìn thấy các số 28°C, 30°C, 32°C và cho rằng đây là kiến thức về thời tiết.",
-        "Lan ghi lại nhiệt độ trong 3 ngày là 28°C, 30°C, 32°C. Sau khi sắp xếp và nhận thấy nhiệt độ tăng dần, Lan kết luận nhiệt độ đang có xu hướng tăng và quyết định mang theo nước khi ra ngoài.",
-        "Minh nhìn thấy số 30°C và cho rằng mọi ngày trong tuần đều có nhiệt độ 30°C.",
-        "An nhập các con số vào máy tính nhưng không xem xét hoặc phân tích chúng."
-      ],
+      text: "Sau khi xem ứng dụng, Lan biết “Hôm nay nhiệt độ là 39°C”. Nội dung này thuộc loại nào?",
+      options: ["Dữ liệu", "Thông tin", "Kiến thức", "Thiên kiến"],
       correct: 1,
-      explain: "Dữ liệu là những sự kiện, con số hoặc thông tin ban đầu chưa được xử lý. Thông tin là dữ liệu đã được tổ chức hoặc xử lý để trở nên có ý nghĩa. Kiến thức là sự hiểu biết được hình thành từ thông tin và có thể áp dụng vào thực tế."
+      explain: "Thông tin là dữ liệu đã được xử lý hoặc giải thích để mang lại ý nghĩa cho con người."
     },
     {
-      type: "radio",
-      category: "Dữ liệu – Thông tin – Kiến thức khi dùng AI",
-      text: "Câu 2. Khi sử dụng AI để tìm hiểu một chủ đề, tình huống nào sau đây thể hiện đúng việc sử dụng dữ liệu, thông tin và kiến thức?",
-      options: [
-        "Nam nhập câu hỏi vào AI và xem câu trả lời mà không cần quan tâm đến dữ liệu được cung cấp.",
-        "Lan cung cấp cho AI dữ liệu về số giờ học của mình, yêu cầu AI phân tích và nhận được thông tin về thời gian học. Sau đó, Lan sử dụng thông tin này để điều chỉnh lịch học.",
-        "Minh cho rằng mọi câu trả lời của AI đều là kiến thức chính xác.",
-        "An chỉ sử dụng một câu trả lời của AI mà không kiểm tra hoặc suy nghĩ về kết quả."
-      ],
-      correct: 1,
-      explain: "Dữ liệu là thông tin đầu vào được cung cấp cho AI. AI có thể xử lý dữ liệu để tạo ra thông tin hoặc kết quả đầu ra. Con người cần hiểu, đánh giá và áp dụng kết quả để hình thành kiến thức."
-    },
-    {
-      type: "multiple-choice",
-      category: "Đánh giá thông tin",
-      text: "Câu 3. Khi đánh giá một thông tin trên Internet, yếu tố nào cần được xem xét để biết thông tin đó có đáng sử dụng hay không?",
-      options: [
-        "Chỉ cần xem thông tin có nhiều hình ảnh đẹp hay không.",
-        "Chỉ cần xem thông tin có xuất hiện đầu tiên trong kết quả tìm kiếm hay không.",
-        "Xem xét độ chính xác, độ tin cậy, tính hợp lệ và mức độ liên quan của thông tin.",
-        "Chọn thông tin có nội dung dài nhất."
-      ],
+      type: "visual-choice",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Nam biết rằng “Khi trời nắng nóng, nên uống đủ nước để tránh mất nước”. Đây là:",
+      options: ["Dữ liệu", "Thông tin", "Kiến thức", "Dữ liệu thô"],
+      icons: ["🧾", "📊", "🧠", "💬"],
       correct: 2,
-      explain: "Khi đánh giá thông tin cần xem xét độ chính xác, độ tin cậy, tính hợp lệ và mức độ liên quan để xác định chất lượng và mức độ phù hợp của thông tin."
+      explain: "Kiến thức là sự hiểu biết, kinh nghiệm được đúc kết từ thông tin và có thể áp dụng vào thực tế."
+    },
+    {
+      type: "multiple-select",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Hãy tích chọn những gì camera ghi lại ban đầu.",
+      options: ["Hình ảnh của lớp học", "Âm thanh của lớp học", "Ý kiến của người xem", "Kiến thức rút ra từ đoạn ghi hình"],
+      multipleCorrect: [0, 1],
+      explain: "Tín hiệu, hình ảnh, âm thanh thô thu được trực tiếp từ thiết bị là dữ liệu."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Bảng thống kê điểm trung bình của lớp chủ yếu là ____.",
+      answers: ["thông tin"],
+      explain: "Bảng thống kê điểm trung bình đã qua tính toán, xử lý nên là thông tin."
     },
     {
       type: "radio",
-      category: "Đánh giá kết quả đầu ra của AI",
-      text: "Câu 4. AI đưa ra một câu trả lời về một sự kiện lịch sử. Em nên làm gì trước khi sử dụng câu trả lời đó?",
-      options: [
-        "Sử dụng ngay vì AI luôn đưa ra thông tin chính xác.",
-        "Kiểm tra câu trả lời bằng các nguồn thông tin đáng tin cậy khác.",
-        "Chọn câu trả lời vì nó được viết rất dài.",
-        "Tin vào câu trả lời nếu AI sử dụng nhiều từ chuyên môn."
-      ],
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Vì sao kiến thức khác với dữ liệu?",
+      options: ["Kiến thức luôn là con số", "Kiến thức là điều con người hiểu và có thể áp dụng", "Kiến thức không cần kiểm tra", "Kiến thức chỉ do máy tính tạo ra"],
       correct: 1,
-      explain: "Kết quả do AI tạo ra cần được đánh giá và kiểm tra trước khi sử dụng. AI có thể tạo ra thông tin không chính xác hoặc chưa đầy đủ, vì vậy cần đối chiếu với các nguồn đáng tin cậy."
+      explain: "Kiến thức là kết quả của việc con người tiếp nhận, hiểu và vận dụng thông tin vào hành động."
+    },
+    {
+      type: "matching",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Nối mỗi khái niệm với ví dụ phù hợp.",
+      pairs: [["Dữ liệu đầu vào", "Câu hỏi Minh gửi cho AI"], ["Thông tin đầu ra", "Câu trả lời AI gửi lại"], ["Kiến thức", "Điều Minh đã hiểu và có thể áp dụng"]],
+      explain: "Câu hỏi được gửi vào là dữ liệu đầu vào; câu trả lời AI đưa ra là thông tin đầu ra; điều Minh hiểu và vận dụng được là kiến thức."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Sau khi kiểm tra và hiểu câu trả lời, thông tin đã trở thành ____.",
+      answers: ["kiến thức"],
+      explain: "Khi con người đã tiếp thu, thấu hiểu và chủ động diễn đạt lại thì thông tin trở thành kiến thức."
+    },
+    {
+      type: "binary",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Chọn Đúng nếu hành động giúp hình thành kiến thức, chọn Sai nếu chưa đủ để hình thành kiến thức.",
+      items: [["Sao chép câu trả lời AI mà không hiểu.", false], ["Đọc và giải thích lại bằng lời của mình.", true], ["Kiểm tra câu trả lời bằng nguồn đáng tin cậy.", true], ["Chỉ nhìn tiêu đề rồi kết luận.", false]],
+      explain: "Sao chép thụ động mà không tư duy hay hiểu bài thì chưa thể hình thành kiến thức."
+    },
+    {
+      type: "process-order",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Sắp xếp ba khái niệm theo đúng mối quan hệ từ đầu vào đến kiến thức.",
+      steps: ["Dữ liệu", "Thông tin", "Kiến thức"],
+      correct: [0, 1, 2],
+      explain: "Tiến trình chuẩn: Từ dữ liệu thô xử lý thành thông tin, qua thấu hiểu trở thành kiến thức."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Kết luận được rút ra từ dữ liệu và có thể áp dụng gần với khái niệm ____.",
+      answers: ["kiến thức"],
+      explain: "Đây là sự đúc kết mang tính ứng dụng dựa trên tổng hợp các dữ liệu/thông tin."
+    },
+    {
+      type: "multiple-select",
+      category: "Dữ liệu – Thông tin – Kiến thức",
+      text: "Tích chọn những việc giúp biến thông tin thành kiến thức.",
+      options: ["Sao chép nguyên văn câu trả lời", "Đọc và tự giải thích lại nội dung", "Kiểm tra thông tin rồi thử áp dụng", "Tin AI mà không cần kiểm chứng"],
+      multipleCorrect: [1, 2],
+      explain: "Quá trình biến thông tin thành kiến thức đòi hỏi học sinh phải chủ động tư duy, phản biện và áp dụng."
     },
     {
       type: "radio",
-      category: "Quan điểm",
-      text: "Câu 5. Tình huống nào sau đây thể hiện một quan điểm?",
-      options: [
-        "Nước sôi ở nhiệt độ 100°C trong điều kiện áp suất khí quyển tiêu chuẩn.",
-        "Trường học bắt đầu tiết học lúc 7 giờ sáng.",
-        "Minh nói: “Theo em, học bằng máy tính thú vị hơn học bằng sách.”",
-        "Một tuần có 7 ngày."
-      ],
-      correct: 2,
-      explain: "Quan điểm là cách một người suy nghĩ, cảm nhận hoặc đánh giá về một vấn đề. Quan điểm có thể khác nhau giữa những người khác nhau."
-    },
-    {
-      type: "radio",
-      category: "Thiên kiến",
-      text: "Câu 6. Theo em, tình huống nào sau đây thể hiện thiên kiến (Bias)?",
-      options: [
-        "Nam tìm hiểu về một chiếc điện thoại từ nhiều nguồn trước khi đưa ra nhận xét.",
-        "Lan nhìn thấy một bạn học sinh mặc quần áo cũ và nghĩ: “Bạn ấy chắc học không giỏi.”",
-        "Minh tìm hiểu hai sản phẩm, sau đó so sánh giá, tính năng và ưu điểm của từng sản phẩm.",
-        "An đọc nhiều ý kiến khác nhau về một vấn đề và kiểm tra nguồn thông tin trước khi đưa ra kết luận."
-      ],
-      correct: 1,
-      explain: "Thiên kiến (Bias) là xu hướng đưa ra nhận xét hoặc đánh giá theo một hướng nhất định dựa trên định kiến, sở thích hoặc giả định, thay vì xem xét thông tin một cách khách quan và đầy đủ."
-    },
-    {
-      type: "radio",
-      category: "Thiên kiến trong kết quả AI",
-      text: "Câu 7. AI được yêu cầu mô tả một nghề nghiệp và trả lời: “Nghề này chỉ phù hợp với nam giới.” Em nên nhận xét như thế nào?",
-      options: [
-        "Đây chắc chắn là sự thật vì AI đã trả lời.",
-        "Đây có thể là một biểu hiện của thiên kiến vì AI đưa ra nhận xét dựa trên giới tính.",
-        "Đây là thông tin chính xác vì câu trả lời rất ngắn gọn.",
-        "Không cần kiểm tra vì AI không thể có thiên kiến."
-      ],
-      correct: 1,
-      explain: "Kết quả của AI có thể chứa thiên kiến. Nhận xét rằng một nghề chỉ phù hợp với nam giới dựa trên giới tính có thể là một dạng đánh giá thiên lệch."
-    },
-    {
-      type: "radio",
-      category: "Nguồn thông tin",
-      text: "Câu 8. Nguồn thông tin là gì?",
-      options: [
-        "Nơi hoặc tài liệu cung cấp thông tin mà người sử dụng có thể tham khảo.",
-        "Một chương trình chỉ dùng để chơi trò chơi.",
-        "Một thiết bị chỉ dùng để lưu trữ hình ảnh.",
-        "Một câu trả lời mà không cần biết thông tin đến từ đâu."
-      ],
+      category: "Đánh giá thông tin và AI",
+      text: "Lan tìm thông tin về hệ Mặt Trời. Một trang có nhiều lỗi chính tả và số liệu mâu thuẫn với sách giáo khoa. Lan nên nghi ngờ tiêu chí nào?",
+      options: ["Độ chính xác", "Màu sắc", "Độ dài", "Hình ảnh"],
       correct: 0,
-      explain: "Nguồn thông tin (Information Source) là nơi, người, tài liệu hoặc phương tiện cung cấp thông tin. Nguồn giúp người sử dụng đánh giá độ tin cậy và chất lượng của thông tin."
+      explain: "Nhiều lỗi chính tả và mâu thuẫn số liệu là dấu hiệu thiếu tính chính xác."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Đánh giá thông tin và AI",
+      text: "Tác giả, tổ chức xuất bản và nguồn trích dẫn giúp đánh giá ____ của thông tin.",
+      answers: ["độ tin cậy", "tin cậy"],
+      explain: "Thông tin có tác giả và tổ chức uy tín bảo chứng sẽ có độ tin cậy cao."
+    },
+    {
+      type: "visual-choice",
+      category: "Đánh giá thông tin và AI",
+      text: "Kết quả nói về lịch sử phần mềm thay vì cách sử dụng phần mềm chưa đạt tiêu chí nào?",
+      options: ["Mức độ liên quan", "Độ chính xác", "Độ tin cậy", "Tính cập nhật"],
+      icons: ["🔗", "🎯", "🛡️", "🕒"],
+      correct: 0,
+      explain: "Kết quả không đáp ứng đúng nhu cầu tìm kiếm nghĩa là chưa đảm bảo mức độ liên quan."
+    },
+    {
+      type: "multiple-select",
+      category: "Đánh giá thông tin và AI",
+      text: "Tích chọn những việc nên làm với câu trả lời AI chưa có nguồn.",
+      options: ["Kiểm tra sách hoặc nguồn đáng tin cậy", "Đối chiếu với nguồn độc lập khác", "Tin ngay vì câu trả lời nghe hợp lí", "Chia sẻ trước rồi kiểm tra sau"],
+      multipleCorrect: [0, 1],
+      explain: "AI có thể tạo ra thông tin bịa đặt (ảo giác AI) nghe rất thuyết phục nên bắt buộc phải kiểm chứng lại."
     },
     {
       type: "radio",
-      category: "Giới hạn độ tuổi đối với nội dung kỹ thuật số",
-      text: "Câu 9. Một trang web hiển thị nội dung dành cho người dùng từ 13 tuổi trở lên. Nếu một học sinh chưa đủ 13 tuổi muốn truy cập, em nên làm gì?",
-      options: [
-        "Khai sai tuổi để được truy cập.",
-        "Sử dụng tài khoản của người khác.",
-        "Tôn trọng giới hạn độ tuổi và hỏi cha mẹ, giáo viên hoặc người lớn đáng tin cậy khi cần.",
-        "Chia sẻ đường dẫn cho các bạn nhỏ hơn để cùng truy cập."
-      ],
-      correct: 2,
-      explain: "Một số nội dung và dịch vụ kỹ thuật số có giới hạn độ tuổi để phù hợp với người sử dụng. Người dùng cần tôn trọng yêu cầu về độ tuổi và không nên khai sai thông tin để vượt qua giới hạn."
+      category: "Đánh giá thông tin và AI",
+      text: "Vì sao không nên dùng AI làm nguồn duy nhất cho thông tin quan trọng?",
+      options: ["AI không thể trả lời câu hỏi", "AI có thể tạo ra thông tin sai dù câu trả lời nghe hợp lí", "AI luôn trả lời quá ngắn", "AI chỉ dùng được khi không có Internet"],
+      correct: 1,
+      explain: "Mô hình ngôn ngữ của AI có rủi ro tạo ra câu trả lời sai sự thật."
+    },
+    {
+      type: "process-order",
+      category: "Đánh giá thông tin và AI",
+      text: "Sắp xếp các bước kiểm tra thông tin AI trước khi đưa vào bài.",
+      steps: ["Đọc dữ kiện AI đưa ra", "Tìm nguồn đáng tin cậy", "Đối chiếu dữ kiện với nguồn", "Chỉ sử dụng khi đã kiểm tra"],
+      correct: [0, 1, 2, 3],
+      explain: "Cần đọc thông tin, tìm nguồn đáng tin cậy để đối chiếu rồi mới sử dụng."
+    },
+    {
+      type: "matching",
+      category: "Đánh giá thông tin và AI",
+      text: "Nối dấu hiệu của website với cách đánh giá phù hợp.",
+      pairs: [["Không ghi tác giả", "Cần tìm hiểu thêm nguồn khác"], ["Không có nguồn tham khảo", "Chưa đủ căn cứ để tin cậy"], ["Giao diện đẹp", "Không tự chứng minh nội dung chính xác"], ["Có nguồn rõ ràng", "Có thể đối chiếu để đánh giá"]],
+      explain: "Hãy đánh giá thông tin dựa trên tác giả, nguồn tham khảo và khả năng kiểm chứng; giao diện đẹp không đảm bảo nội dung đúng."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Đánh giá thông tin và AI",
+      text: "Câu trả lời không đúng chủ đề chưa đạt tiêu chí ____.",
+      answers: ["liên quan", "mức độ liên quan"],
+      explain: "Nội dung dài nhưng không đúng trọng tâm yêu cầu là thiếu mức độ liên quan."
+    },
+    {
+      type: "binary",
+      category: "Đánh giá thông tin và AI",
+      text: "Chọn Đúng nếu hành động giúp kiểm tra độ chính xác, Sai nếu không giúp kiểm chứng.",
+      items: [["Đối chiếu câu trả lời với nguồn khoa học.", true], ["Tin vì câu trả lời nghe tự tin.", false], ["Kiểm tra dữ kiện ở nguồn đáng tin cậy.", true]],
+      explain: "Đối chiếu với kiến thức khoa học và nguồn đáng tin cậy giúp xác minh độ chính xác."
     },
     {
       type: "radio",
-      category: "So sánh kết quả AI với các nguồn thông tin khác",
-      text: "Câu 10. AI cho Minh một câu trả lời về một chủ đề khoa học. Minh tìm thấy một thông tin khác trong sách giáo khoa nhưng hai thông tin không giống nhau. Minh nên làm gì?",
-      options: [
-        "Chọn câu trả lời của AI vì AI có công nghệ hiện đại.",
-        "Chọn thông tin trong sách mà không cần kiểm tra.",
-        "So sánh hai nguồn, kiểm tra nguồn gốc và tìm thêm nguồn đáng tin cậy để xác định thông tin phù hợp.",
-        "Chọn câu trả lời dài hơn."
-      ],
-      correct: 2,
-      explain: "Khi các nguồn thông tin đưa ra kết quả khác nhau, cần so sánh, kiểm tra nguồn gốc và bằng chứng, đồng thời có thể tìm thêm nguồn đáng tin cậy trước khi đưa ra kết luận."
+      category: "Đánh giá thông tin và AI",
+      text: "Một học sinh hỏi AI một câu hỏi về bài học nhưng AI trả lời về một chủ đề hoàn toàn khác. Em nên đánh giá kết quả đó là:",
+      options: ["Có liên quan cao", "Không phù hợp với yêu cầu", "Chắc chắn chính xác", "Chắc chắn đáng tin cậy"],
+      correct: 1,
+      explain: "Nội dung chệch hướng thể hiện sự không phù hợp với yêu cầu đề ra."
+    },
+    {
+      type: "matching",
+      category: "Đánh giá thông tin và AI",
+      text: "Ghép mỗi tiêu chí đánh giá với câu hỏi phù hợp.",
+      pairs: [["Độ chính xác", "Thông tin có đúng sự thật không?"], ["Độ tin cậy", "Tác giả và nguồn có đáng tin không?"], ["Mức độ phù hợp", "Thông tin có đáp ứng yêu cầu không?"], ["Mức độ liên quan", "Thông tin có liên quan đến chủ đề không?"]],
+      explain: "Đây là các tiêu chí chuẩn giúp đánh giá toàn diện kết quả do AI cung cấp."
+    },
+    {
+      type: "multiple-select",
+      category: "Đánh giá thông tin và AI",
+      text: "Khi AI đưa ra hai đáp án khác nhau, Mai nên tích chọn những cách làm nào.",
+      options: ["Đối chiếu với sách giáo khoa hoặc nguồn đáng tin cậy", "Kiểm tra từ nhiều nguồn độc lập", "Chọn đáp án dài hơn mà không kiểm tra", "Chọn đáp án xuất hiện trước"],
+      multipleCorrect: [0, 1],
+      explain: "Khi có mâu thuẫn thông tin, đối chiếu nguồn tin cậy là cách giải quyết chính xác nhất."
+    },
+    {
+      type: "visual-choice",
+      category: "Quan điểm và thiên kiến",
+      text: "Hai học sinh cùng nghe một bài hát. Một bạn thấy hay, bạn kia thấy nhàm chán. Đây là ví dụ về:",
+      options: ["Dữ liệu", "Quan điểm khác nhau", "Thiên kiến chắc chắn", "Thông tin sai"],
+      icons: ["📊", "👀", "⚖️", "⚠️"],
+      correct: 1,
+      explain: "Cảm nhận hay/dở mang tính cá nhân, đó chính là quan điểm."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn những yếu tố có thể ảnh hưởng đến quan điểm.",
+      options: ["Kinh nghiệm", "Kiến thức", "Niềm tin", "Chỉ tốc độ Internet"],
+      multipleCorrect: [0, 1, 2],
+      explain: "Quan điểm cá nhân được hình thành từ vốn sống, tri thức và niềm tin riêng."
+    },
+    {
+      type: "radio",
+      category: "Quan điểm và thiên kiến",
+      text: "Một học sinh nói: “Theo mình, môn Tin học rất thú vị.” Đây chủ yếu là:",
+      options: ["Quan điểm", "Dữ liệu thô", "Sự thật tuyệt đối", "Nguồn chính thức"],
+      correct: 0,
+      explain: "Câu nói thể hiện nhận định đánh giá chủ quan cá nhân."
+    },
+    {
+      type: "binary",
+      category: "Quan điểm và thiên kiến",
+      text: "Chọn Đúng nếu hành động có thể thể hiện thiên kiến, chọn Sai nếu không thể hiện rõ thiên kiến.",
+      items: [["Chỉ chọn thông tin ủng hộ ý kiến của mình.", true], ["Tìm hiểu cả ý kiến trái chiều.", false], ["Bỏ qua mọi bằng chứng không đồng ý với mình.", true]],
+      explain: "Thiên kiến xác nhận là xu hướng chỉ tiếp nhận thông tin phù hợp với định kiến có sẵn."
+    },
+    {
+      type: "binary",
+      category: "Quan điểm và thiên kiến",
+      text: "Chọn Đúng nếu phát biểu có dấu hiệu thiên kiến, chọn Sai nếu là dữ kiện có thể kiểm chứng.",
+      items: [["Lớp 5A có 35 học sinh.", false], ["Bài kiểm tra diễn ra vào thứ Hai.", false], ["Môn này tuyệt vời nhất và ai không thích đều sai.", true], ["Bài kiểm tra có 20 câu.", false]],
+      explain: "Từ ngữ khẳng định tuyệt đối và bác bỏ các góc nhìn khác thể hiện thiên kiến mạnh mẽ."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn những phát biểu có thể mang tính thiên kiến.",
+      options: ["“Sản phẩm này tốt nhất, mọi người đều nên mua ngay!”", "Sản phẩm có ba màu.", "Chỉ nêu ưu điểm và khẳng định ai cũng nên mua.", "Sản phẩm được giới thiệu vào thứ Hai."],
+      multipleCorrect: [0, 2],
+      explain: "Quảng cáo thường mang xu hướng thiên vị thổi phồng lợi ích sản phẩm."
+    },
+    {
+      type: "radio",
+      category: "Quan điểm và thiên kiến",
+      text: "Một email viết: “Orson đang tranh cử chủ tịch câu lạc bộ khoa học.” Đây là:",
+      options: ["Phát biểu có thể kiểm chứng", "Chắc chắn là thiên kiến", "Quan điểm cá nhân", "Quảng cáo"],
+      correct: 0,
+      explain: "Sự việc có thật hay không có thể xác minh trực tiếp bằng dữ kiện."
+    },
+    {
+      type: "radio",
+      category: "Quan điểm và thiên kiến",
+      text: "Một email viết: “Tớ biết Orson ghét khoa học vì bạn ấy không bao giờ tham gia hội chợ khoa học.” Điểm đáng chú ý là:",
+      options: ["Có suy luận mang tính chủ quan", "Đây chắc chắn là dữ liệu", "Đây là nguồn chính thức", "Đây là thông tin đã được xác minh"],
+      correct: 0,
+      explain: "Đánh giá cảm xúc người khác dựa trên một hành vi đơn lẻ là suy luận chủ quan."
+    },
+    {
+      type: "process-order",
+      category: "Quan điểm và thiên kiến",
+      text: "Sắp xếp cách kiểm tra nhận định về mùa hè năm nay.",
+      steps: ["Tìm số liệu nhiệt độ của hai mùa hè", "So sánh dữ liệu cùng khoảng thời gian", "Dựa vào kết quả để đánh giá nhận định"],
+      correct: [0, 1, 2],
+      explain: "Số liệu đo đạc nhiệt độ thực tế là cơ sở phù hợp để đối chiếu nhận định."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn những câu hỏi có thể giúp phát hiện câu trả lời AI thiếu cân bằng.",
+      options: ["AI có bỏ qua quan điểm khác không?", "AI đã nêu cả lợi ích và hạn chế chưa?", "Website có đẹp không?", "Internet có nhanh không?"],
+      multipleCorrect: [0, 1],
+      explain: "Cần đặt câu hỏi phản biện để phát hiện góc nhìn một chiều của AI."
+    },
+    {
+      type: "matching",
+      category: "Quan điểm và thiên kiến",
+      text: "Nối nguyên nhân với nguy cơ có thể gây ra cho câu trả lời AI.",
+      pairs: [["Dữ liệu có định kiến", "AI có thể lặp lại định kiến"], ["Dữ liệu thiếu đa dạng", "Một số nhóm hoặc quan điểm có thể bị bỏ sót"]],
+      explain: "AI học từ dữ liệu do con người tạo ra; dữ liệu có định kiến hoặc thiếu đa dạng có thể khiến câu trả lời thiên lệch."
+    },
+    {
+      type: "radio",
+      category: "Quan điểm và thiên kiến",
+      text: "Cách đặt câu hỏi nào có thể giúp AI đưa ra câu trả lời cân bằng hơn?",
+      options: ["Câu hỏi chỉ yêu cầu AI bảo vệ một phía", "Câu hỏi yêu cầu xem xét nhiều quan điểm", "Câu hỏi yêu cầu AI bỏ qua ý kiến khác", "Câu hỏi yêu cầu AI luôn đồng ý với người hỏi"],
+      correct: 1,
+      explain: "Yêu cầu AI phân tích đa chiều sẽ nhận được kết quả khách quan hơn."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn cách giúp xem xét đầy đủ cả lợi ích và hạn chế của một lựa chọn.",
+      options: ["Yêu cầu AI nêu thêm hạn chế và quan điểm khác", "Đối chiếu với nguồn độc lập", "Tin ngay vì câu trả lời dài", "Bỏ qua mọi thông tin trái chiều"],
+      multipleCorrect: [0, 1],
+      explain: "Cần yêu cầu thêm thông tin về mặt hạn chế và đối chiếu nguồn để đánh giá toàn diện."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn những dấu hiệu có thể cho thấy bài viết thiên về một phía.",
+      options: ["Chỉ nêu lợi ích và bỏ qua hạn chế", "Có số liệu ghi rõ nguồn", "Dùng lời khẳng định tuyệt đối và bác bỏ mọi ý kiến khác", "Trình bày cả ưu điểm lẫn nhược điểm"],
+      multipleCorrect: [0, 2],
+      explain: "Chỉ đưa tin một chiều hoặc phớt lờ nhược điểm là biểu hiện của bài viết thiên lệch."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Quan điểm và thiên kiến",
+      text: "Quan điểm có thể chịu ảnh hưởng bởi kinh nghiệm, kiến thức và ____.",
+      answers: ["niềm tin"],
+      explain: "Niềm tin cá nhân tác động trực tiếp lên cách hình thành quan điểm."
+    },
+    {
+      type: "matching",
+      category: "Quan điểm và thiên kiến",
+      text: "Nối mỗi khái niệm với mô tả phù hợp.",
+      pairs: [["Phát biểu có thể kiểm chứng", "Có thể đối chiếu bằng dữ kiện"], ["Quan điểm cá nhân", "Thể hiện cách nhìn hoặc cảm nhận riêng"], ["Thiên kiến", "Chỉ chọn thông tin ủng hộ một phía"], ["Đánh giá cân bằng", "Xem xét nhiều quan điểm khác nhau"]],
+      explain: "Kiểm chứng dựa vào dữ kiện thực tế; quan điểm thể hiện góc nhìn riêng; đánh giá cân bằng xem xét nhiều phía."
+    },
+    {
+      type: "binary",
+      category: "Quan điểm và thiên kiến",
+      text: "Chọn Đúng nếu nhận định là dữ kiện có thể kiểm chứng, chọn Sai nếu là ý kiến chủ quan.",
+      items: [["Lớp 5A có 35 học sinh.", true], ["Môn Tin học là môn tuyệt vời nhất.", false], ["Bài kiểm tra có 20 câu.", true]],
+      explain: "Số lượng học sinh và số câu hỏi là dữ kiện thực tế; cảm nhận tuyệt vời là ý kiến chủ quan."
+    },
+    {
+      type: "process-order",
+      category: "Quan điểm và thiên kiến",
+      text: "Sắp xếp các bước kiểm tra nhận định “Mùa hè năm nay mát hơn mùa hè năm ngoái”.",
+      steps: ["Tìm số liệu nhiệt độ của hai mùa hè", "So sánh dữ liệu cùng khoảng thời gian", "Dựa vào kết quả để đánh giá nhận định"],
+      correct: [0, 1, 2],
+      explain: "Thực hiện theo trình tự: Thu thập dữ liệu → So sánh → Đưa ra kết luận."
+    },
+    {
+      type: "radio",
+      category: "Quan điểm và thiên kiến",
+      text: "Muốn AI đưa ra câu trả lời cân bằng hơn, em nên yêu cầu AI làm gì?",
+      options: ["Chỉ bảo vệ một phía", "Xem xét nhiều quan điểm và nêu cả ưu điểm, hạn chế", "Bỏ qua ý kiến trái chiều", "Luôn đồng ý với người hỏi"],
+      correct: 1,
+      explain: "Nhắc AI liệt kê cả ưu điểm và nhược điểm để đảm bảo tính trung lập."
+    },
+    {
+      type: "visual-choice",
+      category: "Quan điểm và thiên kiến",
+      text: "AI khẳng định chỉ một môn học là quan trọng và các môn khác không cần thiết. Cách đánh giá nào phù hợp nhất?",
+      options: ["AI có thể đang thiên về một quan điểm", "AI chắc chắn đã kiểm chứng mọi ý kiến", "Các môn khác thật sự không cần thiết", "Không cần đặt câu hỏi về câu trả lời"],
+      icons: ["⚖️", "✅", "📣", "🤔"],
+      correct: 0,
+      explain: "Mọi môn học đều có vị trí riêng, việc khẳng định chỉ một môn quan trọng thể hiện thiên kiến."
+    },
+    {
+      type: "multiple-select",
+      category: "Quan điểm và thiên kiến",
+      text: "Tích chọn những việc giúp nhận biết và hạn chế thiên kiến trong câu trả lời của AI.",
+      options: ["Yêu cầu AI nêu nhiều quan điểm", "Kiểm tra xem câu trả lời có bỏ qua nhóm hoặc ý kiến nào không", "Tin ngay câu trả lời đầu tiên", "Đối chiếu với nguồn độc lập"],
+      multipleCorrect: [0, 1, 3],
+      explain: "Để hạn chế thiên kiến: Hỏi đa chiều, kiểm tra thiếu sót và đối chiếu nguồn bên ngoài."
+    },
+    {
+      type: "matching",
+      category: "Đánh giá thông tin và AI",
+      text: "Ghép đặc điểm nguồn thông tin với cách xử lý phù hợp.",
+      pairs: [["Website giáo dục có tác giả, tài liệu tham khảo", "Ưu tiên kiểm tra và đối chiếu thêm"], ["Bài đăng mạng xã hội không ghi nguồn", "Không nên tin ngay, cần kiểm chứng"]],
+      explain: "Nguồn có tác giả và tài liệu tham khảo rõ ràng thường dễ đánh giá, đối chiếu hơn; nguồn không ghi xuất xứ cần được kiểm chứng."
+    },
+    {
+      type: "fill-in-blank",
+      category: "Đánh giá thông tin và AI",
+      text: "Đối chiếu câu trả lời của AI với sách giáo khoa nhằm kiểm tra ____ của thông tin.",
+      answers: ["độ chính xác", "tính chính xác", "chính xác"],
+      explain: "Đối chiếu sách giáo khoa là một phương pháp kiểm tra độ chính xác."
+    },
+    {
+      type: "process-order",
+      category: "Đánh giá thông tin và AI",
+      text: "Sắp xếp các bước xử lý khi AI đưa thông tin khác sách giáo khoa.",
+      steps: ["Chưa vội chọn một bên", "Tìm thêm nguồn đáng tin cậy", "Đối chiếu các thông tin", "Chỉ sử dụng sau khi đã kiểm tra"],
+      correct: [0, 1, 2, 3],
+      explain: "Cần bình tĩnh tìm thêm nguồn uy tín để đối chiếu trước khi kết luận và sử dụng thông tin."
+    },
+    {
+      type: "visual-choice",
+      category: "Quan điểm và thiên kiến",
+      text: "Một học sinh hỏi AI: “Hãy cho em biết môn học nào quan trọng nhất.” AI trả lời rằng chỉ có một môn là quan trọng và các môn khác không cần thiết. Cách đánh giá phù hợp nhất là:",
+      options: ["Xem xét khả năng AI đang thiên về một quan điểm", "Tin ngay vì AI đã trả lời", "Kết luận tất cả môn khác đều không quan trọng", "Không cần xem xét các quan điểm khác"],
+      icons: ["⚖️", "🤖", "📚", "🔍"],
+      correct: 0,
+      explain: "Khẳng định mang tính áp đặt của AI có thể phản ánh sự thiên lệch dữ liệu."
+    },
+    {
+      type: "process-order",
+      category: "Đánh giá thông tin và AI",
+      text: "Sắp xếp các bước sử dụng thông tin có trách nhiệm.",
+      steps: ["Thu thập thông tin từ AI và nguồn khác", "Đánh giá, đối chiếu độ tin cậy", "Hiểu nội dung", "Tự diễn đạt lại khi sử dụng"],
+      correct: [0, 1, 2, 3],
+      explain: "Quy trình chuẩn: Thu thập → Kiểm chứng → Thấu hiểu → Diễn đạt có trách nhiệm."
     }
   ]
 };
