@@ -209,6 +209,20 @@
       text-align: center;
     }
 
+    .icon-definitions {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .heart-icon {
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.15em;
+      color: #c62828;
+    }
+
     .stat-badge.life {
       border-color: #f44336;
       background: #ffebee;
