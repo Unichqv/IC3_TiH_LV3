@@ -7,7 +7,7 @@
 
 const quiz = {
   id: "demo-001",
-  title: "NỘI DUNG BÀI HỌC CĐ3",
+  title: "ÔN TẬP CHỦ ĐỀ 1",
   questions: [
     {
       type: "fill-in-blank",
