@@ -71,7 +71,7 @@ function shuffleQuestionAnswers(question) {
 
 function getInitialLives() {
   const lives = Number(document.getElementById("app")?.dataset.lives);
-  return Number.isInteger(lives) && lives > 0 ? lives : 10;
+  return Number.isInteger(lives) && lives >= 0 ? lives : 10;
 }
 
 let state = {
@@ -309,7 +309,7 @@ function answer(correct) {
   if (correct) {
     state.correct++;
     state.score += 100 + (state.correct > 1 ? state.correct * 15 : 0);
-  } else {
+  } else if (getInitialLives() > 0) {
     state.lives = Math.max(0, state.lives - 1);
   }
 
@@ -321,7 +321,7 @@ function answer(correct) {
 ========================================================= */
 
 function next() {
-  if (state.lives <= 0) {
+  if (getInitialLives() > 0 && state.lives <= 0) {
     saveResult();
     state.screen = "failed";
     render();
@@ -558,7 +558,7 @@ function renderExam() {
         <div class="card">
           <div class="hud">
             <div class="hud-stats">
-              <span class="stat-badge life"><svg class="heart-icon" aria-hidden="true"><use href="#heart-icon"></use></svg> ${state.lives}</span>
+              ${getInitialLives() > 0 ? `<span class="stat-badge life"><svg class="heart-icon" aria-hidden="true"><use href="#heart-icon"></use></svg> ${state.lives}</span>` : ""}
               <span class="stat-badge score">⭐ ${state.score}</span>
               ${state.correct >= 2 ? `<span class="stat-badge combo">🔥 x${state.correct}</span>` : ""}
             </div>
