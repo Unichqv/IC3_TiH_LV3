@@ -261,7 +261,7 @@ function renderIntro() {
 function startExam() {
   state.screen = "playing";
   state.index = 0;
-  state.lives = 10;
+  state.lives = getInitialLives();
   state.score = 0;
   state.correct = 0;
   state.attemptNumber = null;
