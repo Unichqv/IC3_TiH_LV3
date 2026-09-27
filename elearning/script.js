@@ -9,7 +9,7 @@ const SCRIPT_URL =
    CẤU HÌNH
 ========================================================= */
 
-const SHUFFLE_QUESTIONS = true;
+const SHUFFLE_QUESTIONS = false;
 const SHUFFLE_ANSWERS = true;
 const SHUFFLE_TRUE_FALSE = true;
 
@@ -346,6 +346,34 @@ function next() {
    RENDER CÂU HỎI
 ========================================================= */
 
+function getCorrectAnswer(q) {
+  if (q.type === "multiple-choice" || q.type === "radio" || q.type === "visual-choice") {
+    return q.options?.[q.correct] ?? "";
+  }
+
+  if (q.type === "fill-in-blank") {
+    return q.answers?.join(" / ") ?? "";
+  }
+
+  if (q.type === "multiple-select") {
+    return (q.multipleCorrect || []).map(index => q.options[index]).join("; ");
+  }
+
+  if (q.type === "matching") {
+    return q.pairs.map(pair => `${pair[0]} → ${pair[1]}`).join("<br>");
+  }
+
+  if (q.type === "binary") {
+    return q.items.map(item => `${item[0]} — ${item[1] ? "Đúng" : "Sai"}`).join("<br>");
+  }
+
+  if (q.type === "process-order") {
+    return (q.correct || []).map((stepIndex, index) => `${index + 1}. ${q.steps[stepIndex]}`).join("<br>");
+  }
+
+  return "";
+}
+
 function renderExam() {
   const q = activeQuestions[state.index];
   let bodyHTML = "";
@@ -563,11 +591,11 @@ function renderExam() {
                   <div class="feedback-status ${state.answerCorrect ? "correct" : "wrong"}">
                     ${state.answerCorrect ? "🎉 Chính xác! Xuất sắc lắm!" : "💡 Chưa đúng rồi, cùng xem giải thích nhé!"}
                   </div>
-                  ${q.type === "fill-in-blank" && !state.answerCorrect ? `
-                    <div class="feedback-explain">Đáp án: ${q.answers[0]}</div>
+                  ${getCorrectAnswer(q) ? `
+                    <div class="feedback-explain"><strong>Đáp án đúng:</strong> <strong>${getCorrectAnswer(q)}</strong></div>
                   ` : ""}
                   ${q.explain ? `
-                    <div class="feedback-explain">Giải thích: ${q.explain}</div>
+                    <div class="feedback-explain"><strong>Giải thích:</strong> ${q.explain}</div>
                   ` : ""}
                 </div>
                 <button class="btn-next" id="nextBtn">Câu Tiếp Theo</button>
