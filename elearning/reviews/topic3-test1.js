@@ -65,7 +65,7 @@ const questionConfigs = {
 
 const quiz = {
   id: "demo-001",
-  title: "QUẢN LÝ THÔNG TIN PHẦN 1",
+  title: "ÔN TẬP CHỦ ĐỀ 3 - TEST 1",
   questions: [
     ["Dữ liệu – Thông tin – Kiến thức", "Lan nhìn thấy dòng chữ “39°C” trên ứng dụng thời tiết. Đây là gì?", ["Dữ liệu", "Thông tin", "Kiến thức", "Ý kiến"], 0, "Dữ liệu là các con số, văn bản, hình ảnh thô chưa qua xử lý hay giải thích cụ thể."],
     ["Dữ liệu – Thông tin – Kiến thức", "Sau khi xem ứng dụng, Lan biết “Hôm nay nhiệt độ là 39°C”. Nội dung này thuộc loại nào?", ["Dữ liệu", "Thông tin", "Kiến thức", "Thiên kiến"], 1, "Thông tin là dữ liệu đã được xử lý hoặc giải thích để mang lại ý nghĩa cho con người."],
