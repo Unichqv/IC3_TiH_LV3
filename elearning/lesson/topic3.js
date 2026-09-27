@@ -8,7 +8,7 @@
 
 const quiz = {
   id: "demo-001",
-  title: "QUẢN LÝ THÔNG TIN PHẦN 1",
+  title: "NỘI DUNG BÀI HỌC CĐ3",
   questions: [
     {
       type: "radio",
