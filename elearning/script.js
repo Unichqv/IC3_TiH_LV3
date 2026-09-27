@@ -879,8 +879,8 @@ function renderResult() {
           </div>
 
           <div class="result-actions">
-            <button class="btn btn-primary" onclick="startExam()">🔄 Chơi Lại</button>
-            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">🏠 Màn Hình Chính</button>
+            <button class="btn btn-primary" onclick="startExam()">Chơi Lại</button>
+            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">Màn Hình Chính</button>
           </div>
         </div>
       </div>
@@ -903,8 +903,8 @@ function renderFailed() {
           </div>
 
           <div class="result-actions">
-            <button class="btn btn-primary" onclick="startExam()">💪 Thử Lại Ngay</button>
-            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">🏠 Màn Hình Chính</button>
+            <button class="btn btn-primary" onclick="startExam()">Thử Lại Ngay</button>
+            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">Màn Hình Chính</button>
           </div>
         </div>
       </div>
