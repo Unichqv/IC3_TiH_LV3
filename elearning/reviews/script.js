@@ -203,12 +203,7 @@ function renderIntro() {
         <div class="card intro">
           <div class="badge">✨ Đấu Trường Tri Thức Số</div>
           <div class="logo">🚀</div>
-          <h1>QUẢN LÝ THÔNG TIN<br><span class="gradient-text">PHẦN 1</span></h1>
-          <div class="info-box">
-            <strong>${quiz.title}</strong><br>
-            <small>${quiz.questions.length} câu hỏi thử thách · 10 trái tim sinh mệnh</small>
-          </div>
-
+          <h1>${quiz.title}<br></h1>
           <form id="startForm" class="form-group">
             <div style="margin-bottom:16px;">
               <label>Chọn Lớp Học</label>
