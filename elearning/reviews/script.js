@@ -70,6 +70,10 @@ function shuffleQuestionAnswers(question) {
 /* =========================================================
    STATE
 ========================================================= */
+function getInitialLives() {
+  const lives = Number(document.getElementById("app")?.dataset.lives);
+  return Number.isInteger(lives) && lives > 0 ? lives : 10;
+}
 
 let state = {
   screen: "intro",
@@ -77,7 +81,7 @@ let state = {
   className: "Năm 5",
   gender: "Không cung cấp",
   index: 0,
-  lives: 10,
+  lives: getInitialLives(),
   score: 0,
   correct: 0,
   attemptNumber: null,
