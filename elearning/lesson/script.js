@@ -71,12 +71,18 @@ function shuffleQuestionAnswers(question) {
    STATE
 ========================================================= */
 
+function getInitialLives() {
+  const lives = Number(document.getElementById("app")?.dataset.lives);
+  return Number.isInteger(lives) && lives > 0 ? lives : 10;
+}
+
 let state = {
   screen: "intro",
   name: "",
   className: "Năm 5",
   gender: "Không cung cấp",
   index: 0,
+  lives: getInitialLives(),
   score: 0,
   correct: 0,
   attemptNumber: null,
@@ -181,6 +187,8 @@ function render() {
     renderExam();
   } else if (state.screen === "result") {
     renderResult();
+  } else {
+    renderFailed();
   }
 }
 
@@ -195,12 +203,7 @@ function renderIntro() {
         <div class="card intro">
           <div class="badge">✨ Đấu Trường Tri Thức Số</div>
           <div class="logo">🚀</div>
-          <h1>QUẢN LÝ THÔNG TIN<br><span class="gradient-text">PHẦN 1</span></h1>
-          <div class="info-box">
-            <strong>${quiz.title}</strong><br>
-            <small>${quiz.questions.length} câu hỏi thử thách · cần đúng ít nhất ${Math.ceil(quiz.questions.length * 0.8)} câu để đạt 80%</small>
-          </div>
-
+          <h1>${quiz.title}<br></h1>
           <form id="startForm" class="form-group">
             <div style="margin-bottom:16px;">
               <label>Chọn Lớp Học</label>
@@ -254,6 +257,7 @@ function renderIntro() {
 function startExam() {
   state.screen = "playing";
   state.index = 0;
+  state.lives = getInitialLives();
   state.score = 0;
   state.correct = 0;
   state.attemptNumber = null;
@@ -307,6 +311,8 @@ function answer(correct) {
   if (correct) {
     state.correct++;
     state.score += 100 + (state.correct > 1 ? state.correct * 15 : 0);
+  } else {
+    state.lives = Math.max(0, state.lives - 1);
   }
 
   render();
@@ -317,6 +323,13 @@ function answer(correct) {
 ========================================================= */
 
 function next() {
+  if (state.lives <= 0) {
+    saveResult();
+    state.screen = "failed";
+    render();
+    return;
+  }
+
   if (state.index + 1 >= activeQuestions.length) {
     saveResult();
     state.screen = "result";
@@ -547,6 +560,7 @@ function renderExam() {
         <div class="card">
           <div class="hud">
             <div class="hud-stats">
+              <span class="stat-badge life"><svg class="heart-icon" aria-hidden="true"><use href="#heart-icon"></use></svg> ${state.lives}</span>
               <span class="stat-badge score">⭐ ${state.score}</span>
               ${state.correct >= 2 ? `<span class="stat-badge combo">🔥 x${state.correct}</span>` : ""}
             </div>
@@ -842,36 +856,55 @@ function saveResult() {
 }
 
 /* =========================================================
-   MÀN HÌNH KẾT QUẢ
+   MÀN HÌNH KẾT QUẢ & THẤT BẠI
 ========================================================= */
 
 function renderResult() {
   const score10 = (state.correct / activeQuestions.length * 10).toFixed(1);
-  const requiredCorrect = Math.ceil(activeQuestions.length * 0.8);
-  const passed = state.correct >= requiredCorrect;
 
   app.innerHTML = `
     <div class="app">
       <div class="container">
         <div class="card result-card">
-          <div class="trophy">${passed ? "🏆" : "📘"}</div>
-          <h1>${passed ? "ĐẠT YÊU CẦU!" : "CHƯA ĐẠT YÊU CẦU"}</h1>
-          <p>${passed ? "Chúc mừng" : "Cố gắng thêm nhé"} <strong>${state.name}</strong>! Em cần đúng ít nhất ${requiredCorrect}/${activeQuestions.length} câu để đạt 80%.</p>
+          <div class="trophy">🏆</div>
+          <h1>HOÀN THÀNH THỬ THÁCH!</h1>
+          <p>Chúc mừng <strong>${state.name}</strong> (${state.className}) đã xuất sắc hoàn thành bài thi!</p>
           
           <div class="score-big">${score10} / 10 Điểm</div>
           
           <div class="info-box">
+            <p><strong>Tổng điểm trò chơi:</strong> ⭐ ${state.score}</p>
             <p><strong>Số câu đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
             <p><strong>Lần làm bài:</strong> Lần ${state.attemptNumber || 1}</p>
           </div>
 
           <div class="result-actions">
-            ${!passed ? `
-              <button class="btn btn-primary" onclick="startExam()">Làm Lại Bài</button>
-            ` : `
-              <button class="btn btn-primary" onclick="startExam()">Chơi Lại</button>
-              <button class="btn btn-secondary" onclick="state.screen='intro'; render();">Màn Hình Chính</button>
-            `}
+            <button class="btn btn-primary" onclick="startExam()">Chơi Lại</button>
+            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">Màn Hình Chính</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderFailed() {
+  app.innerHTML = `
+    <div class="app">
+      <div class="container">
+        <div class="card result-card">
+          <div class="trophy">💔</div>
+          <h1>HẾT SINH MỆNH!</h1>
+          <p>Rất tiếc <strong>${state.name}</strong>, em đã dùng hết trái tim sinh mệnh.</p>
+          
+          <div class="info-box">
+            <p><strong>Số câu trả lời đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
+            <p><strong>Điểm số đạt được:</strong> ⭐ ${state.score}</p>
+          </div>
+
+          <div class="result-actions">
+            <button class="btn btn-primary" onclick="startExam()">Thử Lại Ngay</button>
+            <button class="btn btn-secondary" onclick="state.screen='intro'; render();">Màn Hình Chính</button>
           </div>
         </div>
       </div>
