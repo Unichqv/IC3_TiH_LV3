@@ -866,12 +866,11 @@ function renderResult() {
         <div class="card result-card">
           <div class="trophy">🏆</div>
           <h1>HOÀN THÀNH THỬ THÁCH!</h1>
-          <p>Chúc mừng <strong>${state.name}</strong> (${state.className}) đã xuất sắc hoàn thành bài thi!</p>
+          <p>Chúc mừng <strong>${state.name}</strong> đã xuất sắc hoàn thành bài thi!</p>
           
           <div class="score-big">${score10} / 10 Điểm</div>
           
           <div class="info-box">
-            <p><strong>Tổng điểm trò chơi:</strong> ⭐ ${state.score}</p>
             <p><strong>Số câu đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
             <p><strong>Lần làm bài:</strong> Lần ${state.attemptNumber || 1}</p>
           </div>
