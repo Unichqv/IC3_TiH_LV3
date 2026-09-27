@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QUẢN LÝ THÔNG TIN PHẦN 1</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div id="app"></div>
+
+  <!-- Nạp ngân hàng câu hỏi trước -->
+  <script>
+    const quiz = {
+  id: "demo-001",
+  title: "NỘI DUNG BÀI HỌC CHỦ ĐỀ 3",
+  questions: [
+{
+        category: "Trạm 1: Internet & Mạng Toàn Cầu",
+        text: "Em hãy cho biết, Internet là gì?",
+        options: [
+            "Một thiết bị để thực hiện cuộc gọi điện thoại",
+            "Một trình duyệt Web",
+            "Một vị trí vật lí nơi dữ liệu được lưu trữ",
+            "Một mạng lưới toàn cầu gồm các máy tính và thiết bị được kết nối"
+        ],
+        correct: 3,
+        explain: "Internet là mạng lưới toàn cầu kết nối các máy tính và thiết bị thông minh với nhau để chia sẻ dữ liệu."
+    },
+    {
+        category: "Trạm 1: Internet & Mạng Toàn Cầu",
+        text: "Em hãy cho biết, giao thức nào đảm bảo kết nối an toàn và được mã hóa giữa trình duyệt Web và trang Web?",
+        options: [
+            "HTTP",
+            "HTTPS",
+            "SMTP",
+            "FTP"
+        ],
+        correct: 1,
+        explain: "Giao thức HTTPS (Secure) mã hóa thông tin giúp bảo vệ kết nối giữa trình duyệt và trang web."
+    },
+    {
+        category: "Trạm 1: Internet & Mạng Toàn Cầu",
+        type: "binary",
+        text: "Em hãy chọn CÓ nếu tùy chọn là thành phần của URL và chọn KHÔNG nếu không phải:",
+        items: [
+            { label: "Giao thức (Protocol)", correct: true },
+            { label: "Tên miền (Domain Name)", correct: true },
+            { label: "Chuỗi truy vấn (Query String)", correct: true },
+            { label: "Neo (Anchor)", correct: true }
+        ],
+        explain: "Giao thức, Tên miền, Chuỗi truy vấn và Neo đều là các thành phần hợp lệ cấu tạo nên đường dẫn URL đầy đủ."
+    },
+    {
+        category: "Trạm 1: Internet & Mạng Toàn Cầu",
+        type: "binary",
+        text: "Những bước nào liên quan đến việc lấy thông tin trực tuyến? Chọn CÓ nếu là bước bắt buộc và KHÔNG nếu không phải:",
+        items: [
+            { label: "Nhập URL", correct: true },
+            { label: "Khởi động lại thiết bị", correct: false },
+            { label: "Thông tin từ máy chủ trả về và hiển thị trên trình duyệt", correct: true },
+            { label: "URL phân giải thành địa chỉ IP", correct: true }
+        ],
+        explain: "Quá trình lấy thông tin gồm nhập URL, phân giải IP và máy chủ trả thông tin về. Không bắt buộc phải khởi động lại máy."
+    },
+    {
+        category: "Trạm 2: Địa Chỉ IP & Tiếp Cận Công Nghệ",
+        text: "Em hãy cho biết, tùy chọn nào là đúng khi nói về Khả năng tiếp cận công nghệ (Accessibility)?",
+        options: [
+            "Sự dễ dàng sử dụng và sẵn có của công nghệ dành cho người khuyết tật",
+            "Khả năng kết nối với mạng",
+            "Cách dữ liệu được gửi qua Internet",
+            "Quá trình lưu trữ dữ liệu trên đám mây"
+        ],
+        correct: 0,
+        explain: "Khả năng tiếp cận công nghệ giúp tạo ra các sản phẩm hỗ trợ người khuyết tật sử dụng dễ dàng."
+    },
+    {
+        category: "Trạm 2: Địa Chỉ IP & Tiếp Cận Công Nghệ",
+        type: "binary",
+        text: "Chọn CÓ nếu là tùy chọn để khắc phục sự cố cơ bản trong công nghệ và KHÔNG nếu không phải:",
+        items: [
+            { label: "Khởi động lại thiết bị", correct: true },
+            { label: "Ngắt kết nối nguồn điện khỏi tòa nhà chính", correct: false },
+            { label: "Làm mới hoặc tải lại (Refresh/Reload) trình duyệt Web", correct: true },
+            { label: "Kiểm tra xem tất cả dây cáp đã được kết nối đúng cách chưa", correct: true }
+        ],
+        explain: "Khởi động lại, tải lại trang và kiểm tra dây cáp là các bước xử lý sự cố cơ bản. Không ngắt điện cả tòa nhà!"
+    },
+    {
+        category: "Trạm 2: Địa Chỉ IP & Tiếp Cận Công Nghệ",
+        text: "Em hãy cho biết, mục đích của địa chỉ IP (Internet Protocol) là gì?",
+        options: [
+            "Gửi và nhận Email",
+            "Xác định vị trí địa chỉ vật lí của trang Web",
+            "Xác định thông tin cá nhân của người dùng",
+            "Xác định các thiết bị hỗ trợ Internet trên mạng máy tính"
+        ],
+        correct: 3,
+        explain: "Địa chỉ IP là một dãy số duy nhất được gán cho mỗi thiết bị để xác định thiết bị đó trên mạng."
+    },
+    {
+        category: "Trạm 2: Địa Chỉ IP & Tiếp Cận Công Nghệ",
+        text: "Em hãy cho biết, mục đích chính của địa chỉ IP đối với tài nguyên mạng là gì?",
+        options: [
+            "Chơi các tập tin âm nhạc",
+            "Gửi và nhận Email",
+            "Xác định vị trí của một trang Web",
+            "Điều khiển các thiết bị ngoại vi của máy tính"
+        ],
+        correct: 2,
+        explain: "Địa chỉ IP giúp xác định chính xác vị trí và định danh của một máy chủ chứa trang Web."
+    },
+    {
+        category: "Trạm 3: Sửa Lỗi Thiết Bị & Khắc Phục Sự Cố",
+        text: "Em không kết nối được với Internet ở nhà mình, không ai khác trong nhà gặp vấn đề này. Em nên làm gì trước tiên?",
+        options: [
+            "Thay Pin cho thiết bị của em",
+            "Tắt hoặc vô hiệu hóa Bluetooth trên thiết bị của em",
+            "Di chuyển đến gần bộ định tuyến hơn",
+            "Khởi động lại (Reset) bộ chuyển đổi không dây (Wireless Adapter)"
+        ],
+        correct: 3,
+        explain: "Khởi động lại bộ chuyển đổi không dây (Wireless Adapter) trên máy tính sẽ làm mới card mạng và sửa lỗi kết nối Wi-Fi cá nhân."
+    },
+    {
+        category: "Trạm 3: Sửa Lỗi Thiết Bị & Khắc Phục Sự Cố",
+        text: "Em hãy hoàn thành phát biểu: '___________ giao tiếp là một bộ quy tắc được các máy tính sử dụng để giao tiếp với nhau.'",
+        options: [
+            "Giao thức (Protocol)",
+            "Mạng (Network)",
+            "Diễn đàn (Forum)",
+            "Trình duyệt (Browser)"
+        ],
+        correct: 0,
+        explain: "Giao thức (Protocol) chính là tập hợp các quy tắc định sẵn để các máy tính có thể hiểu và giao tiếp được với nhau."
+    },
+    {
+        category: "Trạm 3: Sửa Lỗi Thiết Bị & Khắc Phục Sự Cố",
+        text: "Em hãy cho biết, bước khắc phục sự cố cơ bản cần thử trên thiết bị âm thanh không hoạt động là gì?",
+        options: [
+            "Điều chỉnh độ sáng màn hình",
+            "Kiểm tra các điều khiển âm lượng",
+            "Cài đặt một Card âm thanh mới",
+            "Thay thế thiết bị"
+        ],
+        correct: 1,
+        explain: "Khi mất tiếng, bước đơn giản đầu tiên luôn là kiểm tra nút vặn âm lượng trên loa hoặc thanh âm lượng phần mềm."
+    },
+    {
+        category: "Trạm 4: Lưu Trữ & Tên Miền Web",
+        text: "Em hãy cho biết, USB Drive dùng để làm gì?",
+        options: [
+            "Chụp ảnh",
+            "Gửi và nhận tin nhắn SMS",
+            "Chơi Game",
+            "Lưu trữ và truyền dữ liệu"
+        ],
+        correct: 3,
+        explain: "USB Flash Drive là thiết bị lưu trữ di động dùng để lưu trữ và trao đổi tệp tin giữa các thiết bị."
+    },
+    {
+        category: "Trạm 4: Lưu Trữ & Tên Miền Web",
+        text: "Em tin tưởng tên miền nào nhất khi tìm kiếm thông tin cập nhật về du lịch nước ngoài?",
+        options: [
+            ".xyz",
+            ".net",
+            ".com",
+            ".gov"
+        ],
+        correct: 3,
+        explain: "Tên miền .gov đại diện cho các cơ quan Chính phủ (Government), có độ tin cậy và chính xác cao nhất."
+    },
+    {
+        category: "Trạm 4: Lưu Trữ & Tên Miền Web",
+        text: "Em hãy cho biết, lợi ích chính của việc lưu trữ đám mây là gì?",
+        options: [
+            "Thông tin chỉ có thể được truy cập bởi một thiết bị tại một thời điểm",
+            "Bất kì ai cũng có thể truy cập tập tin mà không cần xin phép",
+            "Dữ liệu được tự động đồng bộ hóa trên tất cả các thiết bị",
+            "Bản in trên giấy (Physical Copies) của tài liệu được lưu trữ"
+        ],
+        correct: 2,
+        explain: "Lưu trữ đám mây giúp đồng bộ tự động dữ liệu giữa điện thoại, máy tính bàn, laptop và máy tính bảng."
+    },
+    {
+        category: "Trạm 4: Lưu Trữ & Tên Miền Web",
+        text: "Em hãy cho biết, tùy chọn nào dưới đây KHÔNG phải là một phần cấu tạo nằm trong URL?",
+        options: [
+            "Địa chỉ IP (IP Address)",
+            "Tên miền (Domain Name)",
+            "Giao thức (Protocol)",
+            "Tên miền phụ (Subdomain)"
+        ],
+        correct: 0,
+        explain: "URL gồm Giao thức, Tên miền phụ, Tên miền và Đường dẫn. Địa chỉ IP là địa chỉ số định danh máy chủ, không hiển thị trong chuỗi ký tự URL."
+    },
+    {
+        category: "Trạm 1: Quy Trình Truy Cập Web",
+        text: "Em cần mô tả các bước xảy ra khi dùng trình duyệt Web để truy cập www.companypro.net. Chọn đúng tùy chọn phù hợp:",
+        options: [
+            "1. Kết nối được thiết lập đến Máy chủ Web (Web Server) -> 2. Trang (Webpage) được gửi đến máy tính -> 3. Trình duyệt Web hiển thị trang Web",
+            "1. Trang (Webpage) gửi về -> 2. Trình duyệt Web hiển thị -> 3. Kết nối được thiết lập đến Máy chủ Web",
+            "1. Trình duyệt Web hiển thị trang Web -> 2. Khởi động lại thiết bị -> 3. Kết nối được thiết lập",
+            "1. Kết nối đến địa chỉ IP -> 2. Tắt nguồn thiết bị -> 3. Hiển thị trang Web"
+        ],
+        correct: 0,
+        explain: "Quy trình chuẩn: Trình duyệt kết nối đến Máy chủ Web -> Máy chủ phản hồi trang Web (Webpage) về -> Trình duyệt hiển thị nội dung trang cho em[cite: 5, 8]."
+    },
+    {
+        category: "Trạm 1: Tên Miền Tổ Chức",
+        text: "Em định quyên góp cho một tổ chức gây quỹ và muốn đảm bảo mình đang ở đúng trang Web. Tùy chọn nào sau đây là phần đuôi tên miền ĐÚNG cho trang Web chính thức của một tổ chức phi lợi nhuận?",
+        options: [".edu", ".net", ".org", ".com"],
+        correct: 2,
+        explain: "Tên miền .org đại diện cho các tổ chức (Organization), thường dành cho các tổ chức phi lợi nhuận[cite: 4, 8]."
+    },
+    {
+        category: "Trạm 1: Bảo Mật & Đơn Vị Vị Trí",
+        text: "Khi tìm một nhà hàng bán thức ăn nhanh trên mạng, hành động nào sẽ có thể giúp ẩn vị trí của em?",
+        options: [
+            "Tải phần mềm chặn quảng cáo",
+            "Xóa Cookies của em",
+            "Xóa Cache (bộ đệm ẩn) sau khi ngừng duyệt Web",
+            "Bật duyệt Web ở chế độ riêng tư"
+        ],
+        correct: 3,
+        explain: "Bật chế độ riêng tư (Incognito/Private) giúp hạn chế lưu trữ lịch sử và vị trí trực tuyến tạm thời khi duyệt mạng[cite: 6, 8]."
+    },
+    {
+        category: "Trạm 1: Khả Năng Ứng Dụng Công Nghệ",
+        type: "binary",
+        text: "Với mỗi phát biểu về công nghệ, chọn CÓ nếu đây là một điều khả thi hoặc KHÔNG nếu không phải:",
+        items: [
+            { label: "Các công nhân ở một khu mỏ có thể nhận được dữ liệu thời gian thực từ các công nhân ở một khu mỏ khác.", correct: true },
+            { label: "Một y tá làm việc từ xa có thể sử dụng dữ liệu y tế thời gian thực để chẩn đoán các vấn đề cho một bệnh nhân ở nhà.", correct: true },
+            { label: "Máy học (Machine Learning) có thể giúp các nhạc sĩ sáng tác thêm nhiều bài hát nổi tiếng.", correct: true }
+        ],
+        explain: "Tất cả các trường hợp trên đều là tính năng hoàn toàn khả thi của Dữ liệu thời gian thực và Trí tuệ nhân tạo/Máy học[cite: 6, 8]."
+    },
+    {
+        category: "Trạm 2: Thuật Ngữ Mạng & Dữ Liệu",
+        text: "Thuật ngữ nào chỉ các bit dữ liệu nhỏ được thu thập bởi trang Web mà em truy cập để ghi nhớ thông tin đăng nhập hoặc tùy chọn?",
+        options: ["Dữ kiện", "Tấn công xâm nhập (Hacking)", "Cookies", "Bảng tính"],
+        correct: 2,
+        explain: "Cookies là các tệp dữ liệu nhỏ do trang web lưu giữ trên thiết bị của người dùng[cite: 6, 8]."
+    },
+    {
+        category: "Trạm 2: Đánh Giá Tính Năng USB",
+        type: "binary",
+        text: "Đánh giá các tính năng của USB Drive. Chọn CÓ nếu đúng là tính năng của USB và KHÔNG nếu không phải:",
+        items: [
+            { label: "Có thể mang theo dễ dàng", correct: true },
+            { label: "Cung cấp không gian lưu trữ dữ liệu", correct: true },
+            { label: "Truyền tải tập tin giữa các máy tính", correct: true },
+            { label: "Kết nối không dây (Wireless)", correct: false }
+        ],
+        explain: "USB Flash Drive là thiết bị phần cứng cắm qua cổng cắm vật lý, KHÔNG PHẢI kết nối không dây[cite: 5, 8]."
+    },
+    {
+        category: "Trạm 2: Thiết Bị Lưu Trữ",
+        text: "Tùy chọn nào dưới đây mô tả đúng nhất về thiết bị USB Drive?",
+        options: [
+            "Một thiết bị nhớ hoạt động trên đám mây",
+            "Một không gian lưu trữ trên một ổ cứng",
+            "Một cơ sở dữ liệu lưu trữ các tập tin trực tuyến",
+            "Một thiết bị lưu trữ dạng cắm"
+        ],
+        correct: 3,
+        explain: "USB Drive là loại thiết bị phần cứng lưu trữ di động kết nối dạng cắm."
+    },
+    {
+        category: "Trạm 3: Định Nghĩa Địa Chỉ Web",
+        text: "Khái niệm URL (Uniform Resource Locator) được hiểu đúng nhất là gì?",
+        options: [
+            "Nhà phát hành của một trang Web",
+            "Địa chỉ của một trang Web",
+            "Tác giả của một trang Web",
+            "Tên của một trang Web"
+        ],
+        correct: 1,
+        explain: "URL là chuỗi địa chỉ duy nhất dùng để định vị một tài nguyên/trang web trên Internet."
+    },
+    {
+        category: "Trạm 3: Khắc Phục Sự Cố Máy Tính",
+        text: "Máy tính của em hoạt động đột ngột bị chậm. Em nên làm gì trước tiên?",
+        options: [
+            "Đóng các ứng dụng hoặc cửa sổ không sử dụng",
+            "Cập nhật lại hệ điều hành",
+            "Rút phích cắm máy tính ngay lập tức",
+            "Nhấp chuột liên tục"
+        ],
+        correct: 0,
+        explain: "Đóng bớt các ứng dụng đang chạy ẩn sẽ ngay lập tức giải phóng dung lượng RAM giúp máy chạy mượt lại."
+    },
+    {
+        category: "Trạm 3: Định Dạng URL Chẩn",
+        text: "Địa chỉ URL nào sau đây có cấu trúc định dạng ĐÚNG chuẩn?",
+        options: [
+            "http://www.companypro/test",
+            "https://.companypro.net/test",
+            "https://www.companypro.net/test",
+            "https://www.companypro/net/test"
+        ],
+        correct: 2,
+        explain: "URL hợp lệ phải gồm Giao thức (https://) + Tên miền đầy đủ (www.companypro.net) + Đường dẫn (/test)[cite: 4, 8]."
+    },
+    {
+        category: "Trạm 3: Phân Loại Thiết Bị Lưu Trữ",
+        text: "Em chọn giải pháp lưu trữ nào phù hợp nhất khi muốn sao chép hình ảnh giữa hai máy tính mà KHÔNG CÓ KẾT NỐI MẠNG?",
+        options: [
+            "Lưu trữ đám mây (Cloud Storage)",
+            "USB Drive",
+            "Gửi qua Email",
+            "Ổ cứng trực tuyến"
+        ],
+        correct: 1,
+        explain: "USB Drive không cần kết nối mạng để truyền hay chép dữ liệu giữa các máy tính[cite: 5, 8]."
+    },
+    {
+        category: "Trạm 4: Xử Lý Lỗi Thiết Bị Ngoại Vi",
+        text: "Máy in của em ngừng in đột ngột, em nên làm gì trước tiên để giải quyết vấn đề này?",
+        options: [
+            "Khởi động lại máy tính",
+            "Kiểm tra dây cáp hoặc kết nối của máy in",
+            "Thay đổi trình điều khiển máy in (Driver)",
+            "Dọn sạch hàng chờ máy in"
+        ],
+        correct: 1,
+        explain: "Luôn kiểm tra các yếu tố vật lý cơ bản (dây nguồn, dây cáp USB, cáp mạng) đầu tiên khi gặp sự cố phần cứng[cite: 6, 8]."
+    },
+    {
+        category: "Trạm 4: Công Nghệ Định Hướng Vị Trí",
+        text: "Orson là tài xế xe buýt trường học đang chở học sinh đến một điểm tham quan chưa từng đến. Anh ấy nên dùng loại công nghệ nào để định hướng vị trí chính xác?",
+        options: [
+            "Radio",
+            "Quả địa cầu (Globe)",
+            "Máy phát MP3 (MP3 Player)",
+            "GPS (Global Positioning System)"
+        ],
+        correct: 3,
+        explain: "GPS (Hệ thống định vị toàn cầu) giúp định vị tọa độ và dẫn đường trên bản đồ số[cite: 4, 8]."
+    },
+
+    // --- BỘ CÂU HỎI BỔ SUNG VỀ TRÍ TUỆ NHÂN TẠO TẠO SINH (GEN AI) ---
+    {
+        category: "Trạm 5: Khái Niệm AI Tạo Sinh",
+        text: "Trí tuệ nhân tạo tạo sinh (Generative AI) được hiểu đúng nhất là công cụ có khả năng gì?",
+        options: [
+            "Chỉ dùng để tính toán các phép toán số học đơn giản",
+            "Tự động tạo ra các nội dung mới như văn bản, hình ảnh, âm thanh, câu trả lời dựa trên yêu cầu",
+            "Tự động sửa chữa phần cứng máy tính bị hỏng",
+            "In tài liệu ra giấy mà không cần dùng mực"
+        ],
+        correct: 1,
+        explain: "AI tạo sinh (Generative AI) có khả năng tổng hợp dữ liệu để tạo ra nội dung hoàn toàn mới theo câu lệnh yêu cầu của người dùng[cite: 6]."
+    },
+    {
+        category: "Trạm 5: Đặt Câu Lệnh AI (Prompting)",
+        text: "Để công cụ AI tạo ra một hình ảnh chú robot trồng cây chính xác nhất theo ý em, câu lệnh (Prompt) nào dưới đây là hiệu quả nhất?",
+        options: [
+            "Vẽ robot",
+            "Hãy vẽ cho tôi một con robot thông minh",
+            "Hãy vẽ một chú robot thân thiện màu xanh lá đang tưới cây trên Mặt Trăng, phong cách hoạt hình 3D tươi sáng",
+            "Robot và cây xanh"
+        ],
+        correct: 2,
+        explain: "Câu lệnh càng chi tiết về đối tượng, màu sắc, hành động, bối cảnh và phong cách nghệ thuật thì AI càng cho ra kết quả chính xác[cite: 6]."
+    },
+    {
+        category: "Trạm 5: Kiểm Chứng Thông Tin AI",
+        text: "Khi sử dụng các công cụ AI để tìm kiếm câu trả lời cho bài học, em NÊN thực hiện hành động nào sau đây?",
+        options: [
+            "Tin tưởng tuyệt đối và chép ngay vào bài tập",
+            "Kiểm tra và so sánh lại kết quả của AI với Sách giáo khoa hoặc nguồn thông tin uy tín",
+            "Gửi ngay câu trả lời cho bạn bè mà không cần đọc",
+            "Tắt máy tính vì AI luôn trả lời sai"
+        ],
+        correct: 1,
+        explain: "AI đôi khi có thể tạo ra thông tin không chính xác (ảo giác AI). Học sinh luôn cần đối chiếu lại với Sách giáo khoa hoặc hỏi giáo viên[cite: 4, 6]."
+    },
+    {
+        category: "Trạm 5: Khác Biệt Giữa AI Và Tìm Kiếm",
+        text: "Điểm khác biệt chính giữa công cụ AI tạo sinh và công cụ tìm kiếm truyền thống (như Google Search) là gì?",
+        options: [
+            "Công cụ tìm kiếm liệt kê các đường liên kết trang Web, còn AI tạo sinh có thể tổng hợp và tự viết câu trả lời trực tiếp",
+            "Công cụ tìm kiếm không cần kết nối Internet",
+            "AI tạo sinh luôn cho kết quả đúng 100%",
+            "Công cụ tìm kiếm chỉ hoạt động vào ban ngày"
+        ],
+        correct: 0,
+        explain: "Công cụ tìm kiếm giúp tìm và liệt kê các trang web liên quan, trong khi AI tạo sinh có thể xử lý, tóm tắt và trình bày câu trả lời hoàn chỉnh[cite: 6]."
+    },
+    {
+        category: "Trạm 5: An Toàn Khi Dùng AI",
+        text: "Nguyên tắc AN TOÀN quan trọng nhất em cần tuân thủ khi sử dụng các công cụ trò chuyện với AI là gì?",
+        options: [
+            "Không bao giờ chia sẻ thông tin cá nhân (như họ tên đầy đủ, địa chỉ nhà, số điện thoại, mật khẩu)",
+            "Chỉ được trò chuyện với AI bằng Tiếng Anh",
+            "Phải nộp tiền trước khi hỏi AI",
+            "Chỉ dùng AI trên điện thoại di động"
+        ],
+        correct: 0,
+        explain: "Bảo vệ dữ liệu cá nhân là quy tắc hàng đầu: Tuyệt đối không nhập thông tin riêng tư hay mật khẩu vào các hệ thống AI trực tuyến[cite: 6]."
+    },
+    {
+        category: "Trạm 5: Huấn Luyện AI",
+        text: "Chất lượng kết quả trả lời của một mô hình Trí tuệ nhân tạo (AI) phụ thuộc chủ yếu vào yếu tố nào?",
+        options: [
+            "Kích thước màn hình máy tính",
+            "Dữ liệu được dùng để huấn luyện AI (chất lượng, độ đa dạng và tính chính xác của dữ liệu)",
+            "Màu sắc của chuột máy tính",
+            "Tốc độ gõ phím của người dùng"
+        ],
+        correct: 1,
+        explain: "AI học hỏi quy luật từ dữ liệu. Nếu dữ liệu huấn luyện bị thiếu, sai lệch hoặc không đa dạng, kết quả AI tạo ra sẽ không chính xác[cite: 5]."
+    }
+  ]
+};
+
+// Chuẩn hóa dữ liệu để tương thích với phần hiển thị trong script.js.
+quiz.questions = quiz.questions.map(question => {
+  if (!question.type && Array.isArray(question.options)) {
+    question.type = "multiple-choice";
+  }
+
+  if (question.type === "binary" && Array.isArray(question.items)) {
+    question.items = question.items.map(item =>
+      Array.isArray(item) ? item : [item.label, item.correct]
+    );
+  }
+
+  return question;
+});
+  </script>
+  <!-- Nạp logic xử lý ứng dụng -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>
