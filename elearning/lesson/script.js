@@ -1,7 +1,7 @@
 
 
 const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwe81U6N0Ai11mIp4R6vS3YPqpNmunOtjya7219k5vuUpgmVIea4jBDZZSQLATy3ksm-g/exec";
+  "https://script.google.com/macros/s/AKfycbxzEgOwFhQxaXCZCvIR6BsHLyg3rUpTFu-ahjmkTXD97DoW1039ocw3Yep31lcC7WS-/exec";
 
 /* =========================================================
    CẤU HÌNH
