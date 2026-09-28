@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QUẢN LÝ THÔNG TIN PHẦN</title>
-  <link rel="stylesheet" href="../styles.css">
+  <title>QUẢN LÝ THÔNG TIN PHẦN 1</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
   <div id="app" data-lives="0"></div>
   <svg class="icon-definitions" aria-hidden="true" focusable="false">
     <symbol id="heart-icon" viewBox="0 0 24 24">
-      <path fill="currentColor" d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z" />
+      <path fill="currentColor"
+        d="M12 21.35 10.55 4.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A6 6 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z" />
     </symbol>
   </svg>
   <!-- Nạp ngân hàng câu hỏi trước -->
@@ -22,143 +23,505 @@
 
    Đổi type để chọn dạng câu hỏi. Các dạng được hỗ trợ:
    multiple-choice, radio, visual-choice, fill-in-blank,
-   multiple-select, matching, binary, process-order.
+   multiple-select, matching, binary, process-order, slide.
+   Slide: { type: "slide", title: "Tiêu đề", content: "Nội dung" }
 ========================================================= */
 
 const quiz = {
   id: "demo-001",
   title: "BÀI HỌC CHỦ ĐỀ 3 PHẦN 1",
   questions: [
-    {
-      type: "radio",
-      category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Câu 1. Tình huống nào sau đây thể hiện đúng quá trình từ dữ liệu → thông tin → kiến thức?",
-      options: [
-        "Nam nhìn thấy các số 28°C, 30°C, 32°C và cho rằng đây là kiến thức về thời tiết.",
-        "Lan ghi lại nhiệt độ trong 3 ngày là 28°C, 30°C, 32°C. Sau khi sắp xếp và nhận thấy nhiệt độ tăng dần, Lan kết luận nhiệt độ đang có xu hướng tăng và quyết định mang theo nước khi ra ngoài.",
-        "Minh nhìn thấy số 30°C và cho rằng mọi ngày trong tuần đều có nhiệt độ 30°C.",
-        "An nhập các con số vào máy tính nhưng không xem xét hoặc phân tích chúng."
-      ],
-      correct: 1,
-      explain: "Dữ liệu là những sự kiện, con số hoặc thông tin ban đầu chưa được xử lý. Thông tin là dữ liệu đã được tổ chức hoặc xử lý để trở nên có ý nghĩa. Kiến thức là sự hiểu biết được hình thành từ thông tin và có thể áp dụng vào thực tế."
-    },
-    {
-      type: "radio",
-      category: "Dữ liệu – Thông tin – Kiến thức khi dùng AI",
-      text: "Câu 2. Khi sử dụng AI để tìm hiểu một chủ đề, tình huống nào sau đây thể hiện đúng việc sử dụng dữ liệu, thông tin và kiến thức?",
-      options: [
-        "Nam nhập câu hỏi vào AI và xem câu trả lời mà không cần quan tâm đến dữ liệu được cung cấp.",
-        "Lan cung cấp cho AI dữ liệu về số giờ học của mình, yêu cầu AI phân tích và nhận được thông tin về thời gian học. Sau đó, Lan sử dụng thông tin này để điều chỉnh lịch học.",
-        "Minh cho rằng mọi câu trả lời của AI đều là kiến thức chính xác.",
-        "An chỉ sử dụng một câu trả lời của AI mà không kiểm tra hoặc suy nghĩ về kết quả."
-      ],
-      correct: 1,
-      explain: "Dữ liệu là thông tin đầu vào được cung cấp cho AI. AI có thể xử lý dữ liệu để tạo ra thông tin hoặc kết quả đầu ra. Con người cần hiểu, đánh giá và áp dụng kết quả để hình thành kiến thức."
-    },
-    {
-      type: "multiple-choice",
-      category: "Đánh giá thông tin",
-      text: "Câu 3. Khi đánh giá một thông tin trên Internet, yếu tố nào cần được xem xét để biết thông tin đó có đáng sử dụng hay không?",
-      options: [
-        "Chỉ cần xem thông tin có nhiều hình ảnh đẹp hay không.",
-        "Chỉ cần xem thông tin có xuất hiện đầu tiên trong kết quả tìm kiếm hay không.",
-        "Xem xét độ chính xác, độ tin cậy, tính hợp lệ và mức độ liên quan của thông tin.",
-        "Chọn thông tin có nội dung dài nhất."
-      ],
-      correct: 2,
-      explain: "Khi đánh giá thông tin cần xem xét độ chính xác, độ tin cậy, tính hợp lệ và mức độ liên quan để xác định chất lượng và mức độ phù hợp của thông tin."
-    },
-    {
-      type: "radio",
-      category: "Đánh giá kết quả đầu ra của AI",
-      text: "Câu 4. AI đưa ra một câu trả lời về một sự kiện lịch sử. Em nên làm gì trước khi sử dụng câu trả lời đó?",
-      options: [
-        "Sử dụng ngay vì AI luôn đưa ra thông tin chính xác.",
-        "Kiểm tra câu trả lời bằng các nguồn thông tin đáng tin cậy khác.",
-        "Chọn câu trả lời vì nó được viết rất dài.",
-        "Tin vào câu trả lời nếu AI sử dụng nhiều từ chuyên môn."
-      ],
-      correct: 1,
-      explain: "Kết quả do AI tạo ra cần được đánh giá và kiểm tra trước khi sử dụng. AI có thể tạo ra thông tin không chính xác hoặc chưa đầy đủ, vì vậy cần đối chiếu với các nguồn đáng tin cậy."
-    },
-    {
-      type: "radio",
-      category: "Quan điểm",
-      text: "Câu 5. Tình huống nào sau đây thể hiện một quan điểm?",
-      options: [
-        "Nước sôi ở nhiệt độ 100°C trong điều kiện áp suất khí quyển tiêu chuẩn.",
-        "Trường học bắt đầu tiết học lúc 7 giờ sáng.",
-        "Minh nói: “Theo em, học bằng máy tính thú vị hơn học bằng sách.”",
-        "Một tuần có 7 ngày."
-      ],
-      correct: 2,
-      explain: "Quan điểm là cách một người suy nghĩ, cảm nhận hoặc đánh giá về một vấn đề. Quan điểm có thể khác nhau giữa những người khác nhau."
-    },
-    {
-      type: "radio",
-      category: "Thiên kiến",
-      text: "Câu 6. Theo em, tình huống nào sau đây thể hiện thiên kiến (Bias)?",
-      options: [
-        "Nam tìm hiểu về một chiếc điện thoại từ nhiều nguồn trước khi đưa ra nhận xét.",
-        "Lan nhìn thấy một bạn học sinh mặc quần áo cũ và nghĩ: “Bạn ấy chắc học không giỏi.”",
-        "Minh tìm hiểu hai sản phẩm, sau đó so sánh giá, tính năng và ưu điểm của từng sản phẩm.",
-        "An đọc nhiều ý kiến khác nhau về một vấn đề và kiểm tra nguồn thông tin trước khi đưa ra kết luận."
-      ],
-      correct: 1,
-      explain: "Thiên kiến (Bias) là xu hướng đưa ra nhận xét hoặc đánh giá theo một hướng nhất định dựa trên định kiến, sở thích hoặc giả định, thay vì xem xét thông tin một cách khách quan và đầy đủ."
-    },
-    {
-      type: "radio",
-      category: "Thiên kiến trong kết quả AI",
-      text: "Câu 7. AI được yêu cầu mô tả một nghề nghiệp và trả lời: “Nghề này chỉ phù hợp với nam giới.” Em nên nhận xét như thế nào?",
-      options: [
-        "Đây chắc chắn là sự thật vì AI đã trả lời.",
-        "Đây có thể là một biểu hiện của thiên kiến vì AI đưa ra nhận xét dựa trên giới tính.",
-        "Đây là thông tin chính xác vì câu trả lời rất ngắn gọn.",
-        "Không cần kiểm tra vì AI không thể có thiên kiến."
-      ],
-      correct: 1,
-      explain: "Kết quả của AI có thể chứa thiên kiến. Nhận xét rằng một nghề chỉ phù hợp với nam giới dựa trên giới tính có thể là một dạng đánh giá thiên lệch."
-    },
-    {
-      type: "radio",
-      category: "Nguồn thông tin",
-      text: "Câu 8. Nguồn thông tin là gì?",
-      options: [
-        "Nơi hoặc tài liệu cung cấp thông tin mà người sử dụng có thể tham khảo.",
-        "Một chương trình chỉ dùng để chơi trò chơi.",
-        "Một thiết bị chỉ dùng để lưu trữ hình ảnh.",
-        "Một câu trả lời mà không cần biết thông tin đến từ đâu."
-      ],
-      correct: 0,
-      explain: "Nguồn thông tin (Information Source) là nơi, người, tài liệu hoặc phương tiện cung cấp thông tin. Nguồn giúp người sử dụng đánh giá độ tin cậy và chất lượng của thông tin."
-    },
-    {
-      type: "radio",
-      category: "Giới hạn độ tuổi đối với nội dung kỹ thuật số",
-      text: "Câu 9. Một trang web hiển thị nội dung dành cho người dùng từ 13 tuổi trở lên. Nếu một học sinh chưa đủ 13 tuổi muốn truy cập, em nên làm gì?",
-      options: [
-        "Khai sai tuổi để được truy cập.",
-        "Sử dụng tài khoản của người khác.",
-        "Tôn trọng giới hạn độ tuổi và hỏi cha mẹ, giáo viên hoặc người lớn đáng tin cậy khi cần.",
-        "Chia sẻ đường dẫn cho các bạn nhỏ hơn để cùng truy cập."
-      ],
-      correct: 2,
-      explain: "Một số nội dung và dịch vụ kỹ thuật số có giới hạn độ tuổi để phù hợp với người sử dụng. Người dùng cần tôn trọng yêu cầu về độ tuổi và không nên khai sai thông tin để vượt qua giới hạn."
-    },
-    {
-      type: "radio",
-      category: "So sánh kết quả AI với các nguồn thông tin khác",
-      text: "Câu 10. AI cho Minh một câu trả lời về một chủ đề khoa học. Minh tìm thấy một thông tin khác trong sách giáo khoa nhưng hai thông tin không giống nhau. Minh nên làm gì?",
-      options: [
-        "Chọn câu trả lời của AI vì AI có công nghệ hiện đại.",
-        "Chọn thông tin trong sách mà không cần kiểm tra.",
-        "So sánh hai nguồn, kiểm tra nguồn gốc và tìm thêm nguồn đáng tin cậy để xác định thông tin phù hợp.",
-        "Chọn câu trả lời dài hơn."
-      ],
-      correct: 2,
-      explain: "Khi các nguồn thông tin đưa ra kết quả khác nhau, cần so sánh, kiểm tra nguồn gốc và bằng chứng, đồng thời có thể tìm thêm nguồn đáng tin cậy trước khi đưa ra kết luận."
-    }
+    // ============================================================
+// BÀI 9 - DỮ LIỆU, THÔNG TIN VÀ KIẾN THỨC
+// ============================================================
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Dữ liệu là gì?" },
+    { type: "p", text: "Dữ liệu là các con số, chữ, hình ảnh hoặc âm thanh ban đầu, chưa được xử lý để tạo ra ý nghĩa." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Màu trắng<br>39°C" }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Dữ liệu – Thông tin – Kiến thức",
+  text: "Câu 1. Tình huống nào sau đây là dữ liệu?",
+  options: [
+    "Lan nhìn thấy số 39°C và kết luận hôm nay trời rất nóng.",
+    "Minh ghi lại các số 28°C, 30°C, 32°C vào sổ.",
+    "An biết khi trời nóng cần uống nhiều nước.",
+    "Hoa nhận thấy nhiệt độ hôm nay cao hơn hôm qua."
+  ],
+  correct: 1,
+  explain: "Các số 28°C, 30°C, 32°C là dữ liệu ban đầu được ghi lại, chưa được xử lý để tạo ra ý nghĩa."
+},
+
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thông tin là gì?" },
+    { type: "p", text: "Thông tin là dữ liệu đã được sắp xếp hoặc xử lý để tạo ra ý nghĩa." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Áo khoác có màu trắng<br>Hôm nay nhiệt độ là 39°C" }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Dữ liệu – Thông tin – Kiến thức",
+  text: "Câu 2. Tình huống nào sau đây thể hiện thông tin?",
+  options: [
+    "Nam nhìn thấy các số 28°C, 30°C, 32°C.",
+    "Lan ghi lại số 28°C vào vở.",
+    "Minh sắp xếp nhiệt độ của ba ngày và nhận thấy hôm nay nhiệt độ là 32°C.",
+    "An nghe thấy tiếng chuông."
+  ],
+  correct: 2,
+  explain: "Thông tin là dữ liệu đã được xử lý hoặc sắp xếp để có ý nghĩa. Minh đã sử dụng dữ liệu nhiệt độ và rút ra thông tin có ý nghĩa."
+},
+
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Kiến thức là gì?" },
+    { type: "p", text: "Kiến thức là điều con người hiểu, biết áp dụng và giải thích được từ thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Nón màu trắng giúp cảm thấy mát hơn khi trời nắng.<br>Cần dừng lại khi đèn giao thông màu đỏ để đảm bảo an toàn." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Dữ liệu – Thông tin – Kiến thức",
+  text: "Câu 3. Tình huống nào sau đây thể hiện kiến thức?",
+  options: [
+    "Lan nhìn thấy đèn giao thông có màu đỏ.",
+    "Nam ghi lại nhiệt độ hôm nay là 39°C.",
+    "Minh biết khi đèn giao thông màu đỏ thì cần dừng lại để đảm bảo an toàn.",
+    "An nhìn thấy một chiếc nón màu trắng."
+  ],
+  correct: 2,
+  explain: "Kiến thức là điều con người hiểu, biết áp dụng và giải thích được. Minh hiểu ý nghĩa của đèn đỏ và biết áp dụng vào thực tế để đảm bảo an toàn."
+},
+
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Dữ liệu, thông tin và kiến thức khi dùng AI" },
+    { type: "p", text: "Dữ liệu có thể là câu hỏi hoặc tài liệu em nhập vào AI." },
+    { type: "p", text: "Câu trả lời của AI là thông tin đầu ra." },
+    { type: "p", text: "Câu trả lời chỉ trở thành kiến thức của em khi em đọc, kiểm tra, hiểu và biết sử dụng đúng." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Dữ liệu – Thông tin – Kiến thức",
+  text: "Câu 4. Lan hỏi AI: “Vì sao cần uống đủ nước khi trời nóng?”. AI đưa ra câu trả lời. Lan đọc, kiểm tra thông tin, hiểu nội dung và biết áp dụng vào thực tế. Điều gì đã xảy ra?",
+  options: [
+    "Câu hỏi của Lan là kiến thức và câu trả lời của AI là dữ liệu.",
+    "Câu trả lời của AI tự động trở thành kiến thức ngay khi AI trả lời.",
+    "Câu hỏi hoặc tài liệu là dữ liệu đầu vào, câu trả lời của AI là thông tin; sau khi Lan hiểu và biết áp dụng, thông tin trở thành kiến thức của Lan.",
+    "Lan không cần kiểm tra vì mọi câu trả lời của AI đều chính xác."
+  ],
+  correct: 2,
+  explain: "Câu hỏi hoặc tài liệu nhập vào AI có thể là dữ liệu đầu vào. Câu trả lời của AI là thông tin đầu ra. Thông tin trở thành kiến thức của người học khi người học đọc, kiểm tra, hiểu và biết sử dụng đúng."
+},
+
+
+// ============================================================
+// BÀI 10 - ĐÁNH GIÁ THÔNG TIN
+// ============================================================
+
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Độ chính xác là gì?" },
+    { type: "p", text: "Độ chính xác cho biết thông tin có đúng với sự thật hay không." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Một thông tin được kiểm tra và xác nhận là đúng với sự thật." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Đánh giá thông tin",
+  text: "Câu 1. Khi kiểm tra một thông tin, việc nào giúp đánh giá độ chính xác của thông tin?",
+  options: [
+    "Tin ngay vì thông tin nghe có vẻ hợp lí.",
+    "Kiểm tra và đối chiếu thông tin với nguồn đáng tin cậy.",
+    "Chia sẻ thông tin ngay cho bạn bè.",
+    "Chỉ đọc tiêu đề của bài viết."
+  ],
+  correct: 1,
+  explain: "Độ chính xác liên quan đến việc thông tin có đúng hay không. Vì vậy cần kiểm tra và đối chiếu thông tin với các nguồn đáng tin cậy."
+},
+
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Độ tin cậy là gì?" },
+    { type: "p", text: "Độ tin cậy cho biết nguồn cung cấp thông tin có đáng tin hay không." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Một Website giáo dục về thiên văn học có nguồn thông tin rõ ràng đáng tin cậy hơn một bài viết không rõ nguồn trên mạng xã hội." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Đánh giá thông tin",
+  text: "Câu 2. Lan cần tìm thông tin về các hành tinh trong hệ Mặt Trời. Nguồn nào sau đây có cơ sở để được đánh giá đáng tin cậy hơn?",
+  options: [
+    "Một bài viết không rõ nguồn trên mạng xã hội.",
+    "Một Website giáo dục về thiên văn học có nguồn thông tin rõ ràng.",
+    "Một bình luận của một người dùng trên mạng xã hội.",
+    "Một bài viết không ghi tác giả và không có nguồn tham khảo."
+  ],
+  correct: 1,
+  explain: "Độ tin cậy liên quan đến việc nguồn cung cấp thông tin có đáng tin hay không. Nguồn có thông tin rõ ràng và phù hợp với nội dung cần tìm có cơ sở để được đánh giá đáng tin cậy hơn."
+},
+
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Tính hợp lệ là gì?" },
+    { type: "p", text: "Tính hợp lệ giúp xác định thông tin có phù hợp với yêu cầu và mục đích sử dụng hay không." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Khi tìm thông tin về các hành tinh, cần sử dụng thông tin phù hợp với yêu cầu của bài học." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Đánh giá thông tin",
+  text: "Câu 3. Minh đang làm bài về các hành tinh trong hệ Mặt Trời. Thông tin nào sau đây phù hợp với yêu cầu của Minh?",
+  options: [
+    "Cách trồng cây trong nhà.",
+    "Cách nấu một món ăn.",
+    "Đặc điểm của Sao Hỏa và Sao Mộc.",
+    "Cách sử dụng mạng xã hội."
+  ],
+  correct: 2,
+  explain: "Tính hợp lệ liên quan đến việc thông tin có phù hợp với yêu cầu và mục đích sử dụng hay không. Đặc điểm của Sao Hỏa và Sao Mộc phù hợp với yêu cầu tìm hiểu về các hành tinh."
+},
+
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Mức độ liên quan là gì?" },
+    { type: "p", text: "Mức độ liên quan cho biết thông tin có liên quan đến vấn đề hoặc câu hỏi đang tìm hiểu hay không." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Khi tìm hiểu về các hành tinh, thông tin về Sao Hỏa có liên quan trực tiếp đến chủ đề." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Đánh giá thông tin",
+  text: "Câu 4. Nam đang tìm hiểu về các hành tinh trong hệ Mặt Trời. Thông tin nào sau đây liên quan trực tiếp đến chủ đề?",
+  options: [
+    "Đặc điểm của Sao Hỏa.",
+    "Cách làm bánh.",
+    "Cách chăm sóc cây cảnh.",
+    "Các môn thể thao phổ biến."
+  ],
+  correct: 0,
+  explain: "Mức độ liên quan cho biết thông tin có liên quan đến vấn đề hoặc câu hỏi đang tìm hiểu hay không. Đặc điểm của Sao Hỏa liên quan trực tiếp đến chủ đề các hành tinh."
+},
+
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Đánh giá kết quả đầu ra của AI" },
+    { type: "p", text: "AI có thể đưa ra câu trả lời nghe hợp lí nhưng vẫn có thể sai." },
+
+    { type: "h2", text: "Cần đánh giá" },
+    { type: "p", text: "Chính xác - Đáng tin cậy - Hợp lệ - Liên quan" },
+
+    { type: "p", text: "Không nên dùng AI làm nguồn duy nhất cho thông tin quan trọng." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Đánh giá thông tin",
+  text: "Câu 5. AI đưa ra một câu trả lời cho bài tập của Minh. Minh nên làm gì?",
+  options: [
+    "Tin ngay vì AI luôn trả lời chính xác.",
+    "Sao chép câu trả lời mà không cần đọc.",
+    "Đánh giá câu trả lời và đối chiếu với các nguồn đáng tin cậy.",
+    "Chỉ xem câu trả lời có dài hay không."
+  ],
+  correct: 2,
+  explain: "AI có thể sai dù câu trả lời nghe hợp lí. Cần đánh giá độ chính xác, độ tin cậy, tính hợp lệ và mức độ liên quan; với thông tin quan trọng cần đối chiếu với nguồn đáng tin cậy."
+},
+
+
+// ============================================================
+// BÀI 11 - QUAN ĐIỂM VÀ THIÊN KIẾN
+// ============================================================
+
+{
+  type: "slide",
+  title: "Quan điểm và thiên kiến",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Quan điểm là gì?" },
+    { type: "p", text: "Quan điểm là cách một người nhìn nhận hoặc hiểu về một điều gì đó dựa trên kinh nghiệm, kiến thức và niềm tin của họ." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Một học sinh thấy một bài hát thú vị.<br>Một học sinh khác lại thấy bài hát nhàm chán.<br>→ Hai bạn có quan điểm khác nhau." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Quan điểm và thiên kiến",
+  text: "Câu 1. Hai học sinh cùng nghe một bài hát. Nam nói bài hát rất thú vị, còn Lan cho rằng bài hát nhàm chán. Tình huống này thể hiện điều gì?",
+  options: [
+    "Hai bạn có cùng quan điểm.",
+    "Hai bạn có quan điểm khác nhau.",
+    "Một bạn chắc chắn có thiên kiến.",
+    "Một bạn chắc chắn đưa ra thông tin sai."
+  ],
+  correct: 1,
+  explain: "Quan điểm là cách mỗi người nhìn nhận hoặc hiểu một điều dựa trên kinh nghiệm, kiến thức và niềm tin của mình. Vì vậy, hai người có thể có những quan điểm khác nhau về cùng một sự việc."
+},
+
+{
+  type: "slide",
+  title: "Quan điểm và thiên kiến",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thiên kiến là gì?" },
+    { type: "p", text: "Thiên kiến là cách một người đánh giá, trình bày hoặc chia sẻ thông tin dựa trên niềm tin và quan điểm cá nhân, có thể làm cho người đó không công bằng và bỏ qua các quan điểm khác." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "“Tớ biết bạn ấy ghét khoa học vì bạn ấy chẳng bao giờ tham gia hội chợ khoa học nào.”<br>→ Nhận xét dựa trên suy đoán cá nhân." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Quan điểm và thiên kiến",
+  text: "Câu 2. Phát biểu nào sau đây có chứa thiên kiến?",
+  options: [
+    "Orson D đang tranh cử cho chức chủ tịch câu lạc bộ khoa học.",
+    "Bạn ấy nhận được một điểm B ở bài kiểm tra tuần trước.",
+    "Tớ biết bạn ấy ghét khoa học vì bạn ấy chẳng bao giờ tham gia hội chợ khoa học nào.",
+    "Bạn ấy tham gia một câu lạc bộ ở trường."
+  ],
+  correct: 2,
+  explain: "Phát biểu cho rằng Orson ghét khoa học dựa trên việc bạn ấy không tham gia hội chợ khoa học là một suy đoán từ quan điểm cá nhân, vì vậy có chứa thiên kiến."
+},
+
+{
+  type: "slide",
+  title: "Quan điểm và thiên kiến",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thiên kiến trong kết quả của AI" },
+    { type: "p", text: "AI có thể phản ánh thiên kiến từ dữ liệu mà AI học được hoặc từ cách con người đặt câu hỏi." },
+
+    { type: "h2", text: "Cần làm gì?" },
+    { type: "h3", text: "Đặt câu hỏi công bằng.<br>Kiểm tra thông tin.<br>Tôn trọng các quan điểm khác nhau." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Quan điểm và thiên kiến",
+  text: "Câu 3. Khi sử dụng AI để hỏi một vấn đề có nhiều cách nhìn nhận, cách làm nào giúp hạn chế thiên kiến?",
+  options: [
+    "Chỉ đặt câu hỏi theo ý kiến mà mình thích.",
+    "Yêu cầu AI đưa ra một câu trả lời duy nhất.",
+    "Đặt câu hỏi công bằng và xem xét các quan điểm khác nhau.",
+    "Tin ngay vào câu trả lời đầu tiên của AI."
+  ],
+  correct: 2,
+  explain: "AI có thể phản ánh thiên kiến từ dữ liệu hoặc cách đặt câu hỏi. Câu hỏi công bằng giúp câu trả lời cân bằng hơn và cần tôn trọng các quan điểm khác nhau."
+},
+
+{
+  type: "radio",
+  category: "Quan điểm và thiên kiến",
+  text: "Câu 4. Minh đọc một bài đăng: “Biến đổi khí hậu chắc chắn là không có thật vì Orson bỏ phiếu chống lại chuyện đó.” Phát biểu này có vấn đề gì?",
+  options: [
+    "Đây chỉ là dữ liệu.",
+    "Đây là một nhận xét có thể chứa thiên kiến vì kết luận dựa trên một quan điểm hoặc suy luận cá nhân.",
+    "Đây là một nguồn thông tin chắc chắn chính xác.",
+    "Đây là thông tin không cần kiểm tra."
+  ],
+  correct: 1,
+  explain: "Phát biểu đưa ra một kết luận dựa trên hành động hoặc quan điểm của một người và có thể bỏ qua các quan điểm khác. Đây là dấu hiệu cần xem xét về thiên kiến."
+},
+
+
+// ============================================================
+// BÀI 12 - NGUỒN THÔNG TIN ĐÁNG TIN CẬY
+// ============================================================
+
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Truyền thông xã hội là gì?" },
+    { type: "p", text: "Truyền thông xã hội là nền tảng trực tuyến cho phép người dùng tạo, chia sẻ và tương tác với nội dung thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Facebook<br>Instagram<br>YouTube" }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Nguồn thông tin đáng tin cậy",
+  text: "Câu 1. Điều gì cần lưu ý khi sử dụng thông tin trên truyền thông xã hội?",
+  options: [
+    "Mọi thông tin trên mạng xã hội đều chính xác.",
+    "Thông tin trên mạng xã hội luôn có nguồn gốc rõ ràng.",
+    "Thông tin có thể lan truyền nhanh nhưng có thể chứa thông tin không chính xác hoặc tin đồn.",
+    "Không cần kiểm tra thông tin được nhiều người chia sẻ."
+  ],
+  correct: 2,
+  explain: "Thông tin trên truyền thông xã hội có thể lan truyền nhanh chóng nhưng cũng có thể chứa thông tin không chính xác hoặc tin đồn. Vì vậy cần kiểm tra nguồn gốc và tính xác thực."
+},
+
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Bình luận là gì?" },
+    { type: "p", text: "Bình luận là những ý kiến, nhận xét hoặc phản hồi của người dùng về nội dung trên mạng xã hội, Blog hoặc Website." },
+
+    { type: "h2", text: "Lưu ý" },
+    { type: "h3", text: "Bình luận có thể cung cấp nhiều góc nhìn nhưng cần đánh giá độ chính xác và độ tin cậy." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Nguồn thông tin đáng tin cậy",
+  text: "Câu 2. Minh đọc một bình luận trên mạng xã hội nói rằng một thông tin là đúng. Minh nên làm gì?",
+  options: [
+    "Tin ngay vì đó là bình luận của một người.",
+    "Chia sẻ ngay cho bạn bè.",
+    "Đánh giá độ chính xác và độ tin cậy của thông tin.",
+    "Cho rằng bình luận luôn là nguồn thông tin chính thức."
+  ],
+  correct: 2,
+  explain: "Bình luận có thể cung cấp những góc nhìn khác nhau nhưng cần được đánh giá để xác định tính chính xác và đáng tin cậy của thông tin."
+},
+
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Diễn đàn là gì?" },
+    { type: "p", text: "Diễn đàn là các Website thảo luận trực tuyến, thường được trình bày dưới dạng câu hỏi và câu trả lời." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Người tham gia có thể đặt câu hỏi, chia sẻ hoặc trao đổi ý kiến về một chủ đề." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Nguồn thông tin đáng tin cậy",
+  text: "Câu 3. Đặc điểm nào sau đây mô tả đúng về diễn đàn?",
+  options: [
+    "Chỉ có một người được phép đăng nội dung.",
+    "Là nơi người tham gia có thể đặt câu hỏi, chia sẻ và thảo luận.",
+    "Mọi thông tin trên diễn đàn đều chắc chắn chính xác.",
+    "Diễn đàn chỉ dùng để xem video."
+  ],
+  correct: 1,
+  explain: "Diễn đàn là các Website thảo luận trực tuyến, nơi người tham gia có thể đăng câu hỏi, chia sẻ hoặc trao đổi ý kiến về nhiều chủ đề."
+},
+
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Nguồn thông tin đáng tin cậy" },
+    { type: "p", text: "Nguồn đáng tin cậy cần có tác giả hoặc tổ chức rõ ràng, có bằng chứng và mục đích cung cấp thông tin rõ ràng." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Sách giáo khoa<br>Website chính thức<br>Bách khoa toàn thư trực tuyến được nhà trường giới thiệu" }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Nguồn thông tin đáng tin cậy",
+  text: "Câu 4. Lan cần tìm thông tin để làm bài học. Nguồn nào sau đây có cơ sở để được xem là đáng tin cậy hơn?",
+  options: [
+    "Một bài đăng không rõ tác giả.",
+    "Một bình luận trên mạng xã hội.",
+    "Một nguồn có tác giả hoặc tổ chức rõ ràng và có bằng chứng.",
+    "Một bài viết được chia sẻ nhiều lần nhưng không có nguồn."
+  ],
+  correct: 2,
+  explain: "Nguồn đáng tin cậy cần rõ tác giả hoặc tổ chức, có bằng chứng và mục đích cung cấp thông tin rõ ràng."
+},
+
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "So sánh kết quả của AI với các nguồn khác" },
+    { type: "p", text: "AI có thể hỗ trợ gợi ý và giải thích thông tin nhưng không thay thế nguồn gốc của thông tin." },
+
+    { type: "h2", text: "Cách kiểm tra" },
+    { type: "h3", text: "Đọc câu trả lời của AI.<br>Kiểm tra bằng sách giáo khoa hoặc nguồn đáng tin cậy khác.<br>So sánh các thông tin tìm được." }
+  ]
+},
+
+{
+  type: "radio",
+  category: "Nguồn thông tin đáng tin cậy",
+  text: "Câu 5. AI trả lời một câu hỏi học tập nhưng Minh chưa biết câu trả lời có chính xác hay không. Minh nên làm gì?",
+  options: [
+    "Tin ngay vì AI có thể trả lời rất nhanh.",
+    "Sao chép câu trả lời vào bài làm.",
+    "Kiểm tra lại bằng sách giáo khoa hoặc nguồn đáng tin cậy khác.",
+    "Không cần kiểm tra nếu câu trả lời nghe hợp lí."
+  ],
+  correct: 2,
+  explain: "AI có thể tổng hợp câu trả lời nhưng trong nhiều trường hợp không cho biết rõ nguồn gốc cụ thể. Vì vậy cần kiểm tra và so sánh với các nguồn thông tin đáng tin cậy khác."
+}
   ]
 };
   </script>
