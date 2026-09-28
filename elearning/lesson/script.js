@@ -751,6 +751,7 @@ function saveResult() {
     fullName: state.name,
     className: state.className,
     examTitle: quiz.title,
+    gender: state.gender,
     score: score10,
     correctAnswers: state.correct,
     wrongAnswers: activeQuestions.length - state.correct,
@@ -847,7 +848,7 @@ function saveResult() {
     fetch(SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload)
     }).catch(error => console.error("Lỗi gửi Google Apps Script:", error));
   }
