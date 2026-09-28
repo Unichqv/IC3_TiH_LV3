@@ -13,6 +13,7 @@ const SHUFFLE_TRUE_FALSE = true;
 
 let activeQuestions = [];
 let trueFalseChoices = [true, false];
+let slideTimer = null;
 
 /* =========================================================
    HÀM TRỘN
@@ -86,6 +87,7 @@ let state = {
   attemptNumber: null,
   answered: false,
   answerCorrect: null,
+  slideRemaining: 30,
   selected: null,
   multi: [],
   blank: "",
@@ -274,6 +276,12 @@ function startExam() {
 ========================================================= */
 
 function prepareQuestion() {
+  clearInterval(slideTimer);
+  slideTimer = null;
+  const slideDuration = Number(activeQuestions[state.index]?.duration);
+  state.slideRemaining = Number.isFinite(slideDuration) && slideDuration > 0
+    ? Math.floor(slideDuration)
+    : 30;
   state.answered = false;
   state.answerCorrect = null;
   state.selected = null;
@@ -294,6 +302,10 @@ function prepareQuestion() {
   if (q.type === "process-order" && q.steps) {
     state.order = shuffleArray(q.steps.map((_, i) => i));
   }
+}
+
+function getScoredQuestionCount() {
+  return activeQuestions.filter(question => question.type !== "slide").length;
 }
 
 /* =========================================================
@@ -344,6 +356,57 @@ function next() {
    RENDER CÂU HỎI
 ========================================================= */
 
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function renderSlideContent(q) {
+  const content = q.content ?? q.text ?? "";
+  const formatSlideText = value => escapeHTML(value)
+    .replace(/\r\n?|\n/g, "<br>")
+    .replace(/&lt;br\s*\/?&gt;/gi, "<br>");
+
+  if (!Array.isArray(content)) {
+    return formatSlideText(content);
+  }
+
+  return content.map(line => {
+    const item = typeof line === "string" ? { type: "p", text: line } : line;
+    const type = String(item.type || "p").toLowerCase();
+    const text = escapeHTML(item.text ?? item.content ?? "");
+
+    if (type === "pic" || type === "image") {
+      const width = Number(item.width);
+      const widthStyle = Number.isFinite(width) && width > 0 ? ` style="width:${width}px"` : "";
+      return `<img class="slide-image" src="${escapeHTML(item.src ?? "")}" alt="${escapeHTML(item.alt ?? "")}"${widthStyle}>`;
+    }
+
+    if (["h1", "h2", "h3"].includes(type)) {
+      return `<${type} class="slide-${type}">${formatSlideText(item.text ?? item.content ?? "")}</${type}>`;
+    }
+
+    if (type === "p") {
+      return `<p class="slide-paragraph">${formatSlideText(item.text ?? item.content ?? "")}</p>`;
+    }
+
+    const styles = [];
+    if (Number.isFinite(Number(item.size)) && Number(item.size) > 0) {
+      styles.push(`font-size:${Number(item.size)}px`);
+    }
+    if (item.color) styles.push(`color:${escapeHTML(item.color)}`);
+    if (item.font) styles.push(`font-family:${escapeHTML(item.font)}`);
+    if (item.bold) styles.push("font-weight:700");
+
+    return `<div${styles.length ? ` style="${styles.join(";")}"` : ""}>${text.replace(/\r\n?|\n/g, "<br>")}</div>`;
+  }).join("");
+}
+
 function getCorrectAnswer(q) {
   if (q.type === "multiple-choice" || q.type === "radio" || q.type === "visual-choice") {
     return q.options?.[q.correct] ?? "";
@@ -376,8 +439,19 @@ function renderExam() {
   const q = activeQuestions[state.index];
   let bodyHTML = "";
 
+  /* SLIDE */
+  if (q.type === "slide") {
+    bodyHTML = `
+      <div class="slide-content">${renderSlideContent(q)}</div>
+      <div class="slide-controls">
+        <span>Skip sau <strong id="slideCountdown">${state.slideRemaining}</strong> giây</span>
+        <button class="btn btn-secondary" id="skipSlide" hidden>Skip</button>
+      </div>
+    `;
+  }
+
   /* MULTIPLE CHOICE */
-  if (q.type === "multiple-choice") {
+  else if (q.type === "multiple-choice") {
     bodyHTML = `
       <div class="options-grid">
         ${q.options.map((opt, idx) => {
@@ -575,8 +649,8 @@ function renderExam() {
           <div class="question-card">
             <div>
               <div class="question-header">
-                <div class="question-category">${q.category}</div>
-                <h2 class="question-text">${q.text}</h2>
+                <div class="question-category">${q.category || (q.type === "slide" ? "Nội dung" : "")}</div>
+                <h2 class="question-text">${q.type === "slide" ? (q.title || "Nội dung") : q.text}</h2>
               </div>
               <div class="question-body">
                 ${bodyHTML}
@@ -613,6 +687,23 @@ function renderExam() {
 ========================================================= */
 
 function bindExam(q) {
+  if (q.type === "slide") {
+    const countdown = document.getElementById("slideCountdown");
+    const skipButton = document.getElementById("skipSlide");
+    skipButton.onclick = next;
+    slideTimer = setInterval(() => {
+      state.slideRemaining = Math.max(0, state.slideRemaining - 1);
+      countdown.textContent = state.slideRemaining;
+
+      if (state.slideRemaining === 0) {
+        clearInterval(slideTimer);
+        slideTimer = null;
+        countdown.parentElement.textContent = "Bạn có thể bỏ qua nội dung này.";
+        skipButton.hidden = false;
+      }
+    }, 1000);
+  }
+
   document.querySelectorAll("[data-i]").forEach(btn => {
     btn.onclick = () => {
       state.selected = Number(btn.dataset.i);
@@ -744,7 +835,11 @@ function moveOrder(pos, dir) {
 ========================================================= */
 
 function saveResult() {
-  const score10 = Number((state.correct / activeQuestions.length * 10).toFixed(1));
+  const scoredQuestionCount = getScoredQuestionCount();
+  const score10 = scoredQuestionCount
+    ? Number((state.correct / scoredQuestionCount * 10).toFixed(1))
+    : 0;
+  const wrongAnswers = scoredQuestionCount - state.correct;
   const submittedAt = new Date().toISOString();
 
   const payload = {
@@ -754,7 +849,7 @@ function saveResult() {
     gender: state.gender,
     score: score10,
     correctAnswers: state.correct,
-    wrongAnswers: activeQuestions.length - state.correct,
+    wrongAnswers,
     submittedAt
   };
 
@@ -832,7 +927,7 @@ function saveResult() {
     examTitle: quiz.title,
     score: score10,
     correctAnswers: state.correct,
-    wrongAnswers: activeQuestions.length - state.correct,
+    wrongAnswers,
     submittedAt
   });
 
@@ -859,7 +954,10 @@ function saveResult() {
 ========================================================= */
 
 function renderResult() {
-  const score10 = (state.correct / activeQuestions.length * 10).toFixed(1);
+  const scoredQuestionCount = getScoredQuestionCount();
+  const score10 = scoredQuestionCount
+    ? (state.correct / scoredQuestionCount * 10).toFixed(1)
+    : "0.0";
 
   app.innerHTML = `
     <div class="app">
@@ -872,7 +970,7 @@ function renderResult() {
           <div class="score-big">${score10} / 10 Điểm</div>
           
           <div class="info-box">
-            <p><strong>Số câu đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
+            <p><strong>Số câu đúng:</strong> ${state.correct} / ${getScoredQuestionCount()}</p>
             <p><strong>Lần làm bài:</strong> Lần ${state.attemptNumber || 1}</p>
           </div>
 
@@ -896,7 +994,7 @@ function renderFailed() {
           <p>Rất tiếc <strong>${state.name}</strong>, em đã dùng hết trái tim sinh mệnh.</p>
           
           <div class="info-box">
-            <p><strong>Số câu trả lời đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
+            <p><strong>Số câu trả lời đúng:</strong> ${state.correct} / ${getScoredQuestionCount()}</p>
             <p><strong>Điểm số đạt được:</strong> ⭐ ${state.score}</p>
           </div>
 
