@@ -26,7 +26,7 @@ button{cursor:pointer}
 .badge{padding:5px 11px;border-radius:9px;font-weight:700;font-size:13px}.grade{background:#eef1ff;color:#4435df;border:1px solid #cbd2ff}.count{background:#edfff8;color:#00885d;border:1px solid #b5efd9}
 .sub{margin:7px 0 0;color:var(--muted);font-size:14px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat .n{font-size:23px;font-weight:800}.stat span{font-size:13px;color:var(--muted)}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat .n{font-size:23px;font-weight:800}.stat .n.insight{font-size:16px;line-height:1.4}.stat span{font-size:13px;color:var(--muted)}.stat .note{display:block;margin-top:6px;font-size:12px;line-height:1.45;color:var(--muted)}
 .toolbar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
 .search{flex:1;min-width:240px;position:relative}.search input{width:100%;padding:12px 15px 12px 42px;border:1px solid #d6deeb;border-radius:12px;outline:none;background:#fff}.search:before{content:"⌕";position:absolute;left:15px;top:8px;font-size:25px;color:#8a98ad;z-index:1}
 select{padding:12px 35px 12px 14px;border:1px solid #d6deeb;border-radius:12px;background:#fff;color:#33405a;min-width:220px;outline:none}
@@ -78,8 +78,8 @@ td.name{text-align:left;font-weight:750;font-size:16px}.muted{color:#9aa7ba;font
   <section class="stats">
     <div class="stat"><span>Tổng học sinh</span><div class="n" id="statStudents">0</div></div>
     <div class="stat"><span>Đã làm bài</span><div class="n" id="statDone">0</div></div>
-    <div class="stat"><span>Tổng số lần làm bài</span><div class="n" id="statAttempts">0</div></div>
-    <div class="stat"><span>Điểm trung bình gần nhất</span><div class="n" id="statAvg">-</div></div>
+    <div class="stat"><span>Tình hình lớp học</span><div class="n insight" id="statSituation">Chưa có kết quả</div><small class="note" id="statSituationDetail">Học sinh chưa có điểm để tổng hợp.</small></div>
+    <div class="stat"><span>Gợi ý hỗ trợ dạy học</span><div class="n insight" id="statAdvice">Chưa có dữ liệu</div><small class="note" id="statAdviceDetail">Kết quả sẽ gợi ý cách hỗ trợ phù hợp cho lớp.</small></div>
   </section>
 
   <div class="toolbar">
@@ -131,12 +131,13 @@ td.name{text-align:left;font-weight:750;font-size:16px}.muted{color:#9aa7ba;font
 
 <script>
 // DÁN LINK GOOGLE WEB APP VÀO ĐÂY SAU KHI TẠO XONG
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfu_GYJpkin4655KGvMW1C96HIR42QJs26A3wEb-7D0avwU3ZGD7sXcXkTREP0Tlek1g/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzEgOwFhQxaXCZCvIR6BsHLyg3rUpTFu-ahjmkTXD97DoW1039ocw3Yep31lcC7WS-/exec";
 
 const KEY='tinHocStudentData_v1';
 const DELETED_KEY='tinHocDeletedStudents_v1';
 const CLASSES_KEY='tinHocClasses_v1';
 let deletedStudents=JSON.parse(localStorage.getItem(DELETED_KEY)||'[]');
+let cloudClasses=[];
 let editId=null;
 
 const seed={
@@ -155,8 +156,40 @@ function fmtScore(value){const score=Number(value);return Number.isFinite(score)
 function examsOf(s){return s.exams||[]}
 function allExamNames(){return [...new Set(db.students.flatMap(s=>examsOf(s).map(e=>e.examTitle)).filter(Boolean))]}
 function allClassNames(){
+  if(cloudClasses.length)return [...new Set(cloudClasses.filter(Boolean))];
   const savedClasses=JSON.parse(localStorage.getItem(CLASSES_KEY)||'[]');
   return [...new Set([db.classInfo.name,...savedClasses,...db.students.map(s=>s.className)].filter(Boolean))];
+}
+function normalizeHeader(value){
+  return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+function findSheetHeader(rows){
+  const nameHeaders=new Set(['hovaten','hoten','tenhocsinh','hovatenhocsinh','tenhocvien','hocvien','hotenhocsinh','hocsinh','studentname']);
+  for(let i=0;i<Math.min(rows?.length||0,10);i++){
+    const row=Array.isArray(rows[i])?rows[i]:[];
+    const indexes={};
+    row.forEach((cell,index)=>{
+      const key=normalizeHeader(cell);
+      if(nameHeaders.has(key))indexes.name=index;
+      if(['thoigiannop','thoigiannopbai','thoigian','ngaynop','timestamp'].includes(key))indexes.time=index;
+      if(['lop','tenlop','class','classname'].includes(key))indexes.className=index;
+      if(['gioitinh','gender'].includes(key))indexes.gender=index;
+      if(['tenbaithi','tenbaion','tenbai','baithi','examtitle'].includes(key))indexes.exam=index;
+      if(['diemso','diem','score'].includes(key))indexes.score=index;
+      if(['socaudung','correctanswers'].includes(key))indexes.correct=index;
+      if(['socausai','wronganswers'].includes(key))indexes.wrong=index;
+    });
+    if(indexes.name!==undefined)return {rowIndex:i,indexes};
+  }
+  return null;
+}
+function hasClassDataRows(rows){
+  return Array.isArray(rows)&&rows.slice(1,11).some(row=>Array.isArray(row)&&row.length>=5&&String(row[1]||'').trim());
+}
+function isClassSheet(sheetName,rows){
+  const normalizedName=normalizeHeader(sheetName);
+  if(normalizedName.includes('tatcads')||normalizedName.includes('tatcadulieu'))return false;
+  return Boolean(findSheetHeader(rows)||hasClassDataRows(rows));
 }
 function uniqueStudentsByName(students){
   const seen=new Set();
@@ -199,30 +232,53 @@ function render(){
   const q=document.getElementById('search').value.toLowerCase().trim();
   const examFilter=document.getElementById('examFilter').value;
   const classFilter=document.getElementById('classFilter').value;
-  const rows=db.students.filter(s=>(!classFilter||s.className===classFilter)&&String(s.fullName||'').toLowerCase().includes(q));
+  const normalizeClass=value=>String(value||'').trim().toLocaleLowerCase('vi');
+  const rows=db.students.filter(s=>(!classFilter||normalizeClass(s.className)===normalizeClass(classFilter))&&String(s.fullName||'').toLowerCase().includes(q));
   const uniqueRows=uniqueStudentsByName(rows);
   document.getElementById('classTitle').textContent=classFilter||'Tất cả lớp';
   document.getElementById('studentCount').textContent=`${uniqueRows.length} Học Sinh`;
   document.getElementById('statStudents').textContent=uniqueRows.length;
 
   const tbody=document.getElementById('studentTable');
-  if(!examFilter){
-    document.getElementById('statDone').textContent='–';
-    document.getElementById('statAttempts').textContent='–';
-    document.getElementById('statAvg').textContent='–';
-    tbody.innerHTML='<tr><td colspan="10" class="empty">Vui lòng chọn bài ôn luyện để xem thống kê. Số lần làm và điểm sẽ chỉ tính cho bài đã chọn.</td></tr>';
-    return;
-  }
-
-  let totalAttempts=0, done=0, latestScores=[];
+  const levels={good:0, fairly:0, pass:0, support:0};
   uniqueRows.forEach(s=>{
     const x=statsFor(s,examFilter);
-    totalAttempts+=x.count;
-    if(x.count){done++;latestScores.push(Number(x.latest)||0);}
+    if(!x.count)return;
+    const score=Number(x.latest)||0;
+    if(score>=8)levels.good++;
+    else if(score>=6)levels.fairly++;
+    else if(score>=5)levels.pass++;
+    else levels.support++;
   });
+  const done=Object.values(levels).reduce((sum,count)=>sum+count,0);
   document.getElementById('statDone').textContent=done;
-  document.getElementById('statAttempts').textContent=totalAttempts;
-  document.getElementById('statAvg').textContent=latestScores.length?(latestScores.reduce((a,b)=>a+b,0)/latestScores.length).toFixed(1):'-';
+
+  const situation=document.getElementById('statSituation');
+  const situationDetail=document.getElementById('statSituationDetail');
+  const advice=document.getElementById('statAdvice');
+  const adviceDetail=document.getElementById('statAdviceDetail');
+  if(!done){
+    situation.textContent='Chưa có kết quả';
+    situationDetail.textContent='Học sinh chưa có điểm để tổng hợp.';
+    advice.textContent='Khuyến khích luyện tập';
+    adviceDetail.textContent='Tổ chức lượt làm bài đầu tiên để xác định nội dung cần hỗ trợ.';
+  }else{
+    const supportRate=levels.support/done;
+    const strongRate=levels.good/done;
+    situation.textContent=supportRate>=0.3?'Cần củng cố':strongRate>=0.6?'Tiến độ tốt':'Kết quả phân hóa';
+    situationDetail.textContent=`Tốt ${levels.good} · Khá ${levels.fairly} · Đạt ${levels.pass} · Cần hỗ trợ ${levels.support}`;
+
+    if(supportRate>=0.3){
+      advice.textContent='Ôn tập nhóm nhỏ';
+      adviceDetail.textContent=`Ưu tiên củng cố kiến thức nền cho ${levels.support} học sinh dưới 5 điểm; kiểm tra lại sau khi ôn.`;
+    }else if(strongRate>=0.6){
+      advice.textContent='Mở rộng thử thách';
+      adviceDetail.textContent='Giao bài vận dụng cho nhóm đã vững, đồng thời duy trì hỗ trợ cho các em còn cần củng cố.';
+    }else{
+      advice.textContent='Dạy học phân hóa';
+      adviceDetail.textContent=`Củng cố theo nhóm cho ${levels.support+levels.pass} em cần hỗ trợ/đạt; giao nhiệm vụ nâng cao cho nhóm khá, tốt.`;
+    }
+  }
 
   if(!uniqueRows.length){tbody.innerHTML='<tr><td colspan="10" class="empty">Không tìm thấy học sinh phù hợp với bộ lọc.</td></tr>';return}
   tbody.innerHTML=uniqueRows.map((s,i)=>{
@@ -230,7 +286,7 @@ function render(){
     const rating=evaluateStudent(x);
     return `<tr>
       <td>${i+1}</td><td class="name">${esc(s.fullName)}</td>
-      <td>${esc(examFilter)}</td>
+      <td>${esc(examFilter||x.latestExam||'–')}</td>
       <td>${x.count}</td><td class="green">${x.max===null?'–':fmtScore(x.max)}</td><td class="red">${x.min===null?'–':fmtScore(x.min)}</td>
       <td class="purple">${x.latest===null?'–':fmtScore(x.latest)}</td><td>${x.latestAt?fmtDate(x.latestAt):'–'}</td>
       <td><span class="rating ${rating.className}">${rating.text}</span></td>
@@ -276,63 +332,102 @@ function addClass(){
 
 function refresh(){renderFilter();renderClassFilter();render()}
 
-function fetchFromCloud(){
+async function fetchFromCloud(){
   if(!SCRIPT_URL || SCRIPT_URL.includes("DÁN_LINK")) {
     toast("Chưa cấu hình URL Google Script!");
     return;
   }
   toast("Đang tải dữ liệu từ Cloud...");
-  fetch(SCRIPT_URL)
-    .then(res => res.json())
-    .then(rows => {
-      if(!rows || rows.length <= 1) return;
-      
-      let studentMap = {};
-      // Bỏ qua dòng tiêu đề (i=0)
-      for(let i=1; i<rows.length; i++){
-        const [time, name, className, gender, examTitle, score, correct, wrong] = rows[i];
-        if(!name) continue;
-        
-        const normalizedKey = studentKey(name,className || 'Lớp Năm 1');
-        if(deletedStudents.includes(normalizedKey)) continue;
-        const key = normalizedKey;
-        if(!studentMap[key]){
-          studentMap[key] = {
-            studentId: 'HS' + String(i).padStart(4, '0'),
-            fullName: name,
-            className: className || 'Lớp Năm 1',
-            grade: 5,
-            gender: gender || 'Nam',
-            exams: []
-          };
-        }
+  cloudClasses=[];
+  try {
+    const response=await fetch(SCRIPT_URL,{cache:'no-store'});
+    const payload=await response.json();
+    let records=[];
 
-        let st = studentMap[key];
-        let ex = st.exams.find(e => e.examTitle === examTitle);
-        if(!ex){
-          ex = { examTitle: examTitle, attempts: [] };
-          st.exams.push(ex);
+    // Google Apps Script trả danh sách tên sheet khi không truyền className.
+    if(Array.isArray(payload) && (!payload.length || typeof payload[0]==='string')){
+      const sheetNames=[...new Set(payload
+        .filter(name=>typeof name==='string' && name.trim())
+        .map(name=>name.trim()))];
+      // Hiển thị mọi tên sheet, kể cả sheet chưa có dữ liệu/tiêu đề chuẩn.
+      cloudClasses=sheetNames;
+      const sheetResults=await Promise.all(sheetNames.map(async sheetName=>{
+        try{
+          const url=`${SCRIPT_URL}?className=${encodeURIComponent(sheetName)}`;
+          const sheetResponse=await fetch(url,{cache:'no-store'});
+          const sheetRows=await sheetResponse.json();
+          if(!isClassSheet(sheetName,sheetRows))return null;
+          const header=findSheetHeader(sheetRows)||{rowIndex:0,indexes:{}};
+          return {sheetName,rows:sheetRows.slice(header.rowIndex+1),indexes:header.indexes};
+        }catch(error){
+          console.error(`Không thể tải sheet lớp ${sheetName}:`,error);
+          return null;
         }
+      }));
 
-        ex.attempts.push({
-          attemptNumber: ex.attempts.length + 1,
-          examTitle: examTitle,
-          score: Number(score),
-          correctAnswers: correct,
-          wrongAnswers: wrong,
-          submittedAt: time
-        });
+      const classSheets=sheetResults.filter(Boolean);
+      records=classSheets.flatMap(sheet=>sheet.rows.map(row=>({row,fallbackClass:sheet.sheetName,indexes:sheet.indexes})));
+    }else if(Array.isArray(payload)){
+      // Tương thích với API cũ trả trực tiếp một bảng dữ liệu.
+      const header=findSheetHeader(payload)|| (hasClassDataRows(payload)?{rowIndex:0,indexes:{}}:null);
+      if(header)records=payload.slice(header.rowIndex+1).map(row=>({row,fallbackClass:'',indexes:header.indexes}));
+    }
+
+    // API cũ có thể trả dữ liệu gộp thay vì danh sách tên sheet.
+    if(!cloudClasses.length){
+      cloudClasses=[...new Set(records.map(({row,indexes={}})=>{
+        const values=Array.isArray(row)?row:[];
+        return indexes.className===undefined?values[2]:values[indexes.className];
+      }).map(name=>String(name||'').trim()).filter(Boolean))];
+    }
+
+    let studentMap={};
+    records.forEach(({row,fallbackClass,indexes={}},i)=>{
+      const values=Array.isArray(row)?row:[];
+      const value=(key,position)=>indexes[key]===undefined?values[position]:values[indexes[key]];
+      const time=value('time',0), name=value('name',1), className=value('className',2);
+      const gender=value('gender',3), examTitle=value('exam',4), score=value('score',5);
+      const correct=value('correct',6), wrong=value('wrong',7);
+      if(!String(name||'').trim())return;
+
+      const studentClass=fallbackClass||className||'Lớp Năm 1';
+      const normalizedKey=studentKey(name,studentClass);
+      if(deletedStudents.includes(normalizedKey))return;
+      if(!studentMap[normalizedKey]){
+        studentMap[normalizedKey]={
+          studentId:'HS'+String(i+1).padStart(4,'0'),
+          fullName:name,
+          className:studentClass,
+          grade:5,
+          gender:gender||'Nam',
+          exams:[]
+        };
       }
 
-      db.students = Object.values(studentMap);
-      save();
-      refresh();
-      toast("Đã đồng bộ " + db.students.length + " học sinh!");
-    })
-    .catch(err => {
-      console.error(err);
-      toast("Lỗi tải dữ liệu!");
+      let student=studentMap[normalizedKey];
+      let exam=student.exams.find(item=>item.examTitle===examTitle);
+      if(!exam){
+        exam={examTitle:examTitle,attempts:[]};
+        student.exams.push(exam);
+      }
+      exam.attempts.push({
+        attemptNumber:exam.attempts.length+1,
+        examTitle:examTitle,
+        score:Number(score),
+        correctAnswers:correct,
+        wrongAnswers:wrong,
+        submittedAt:time
+      });
     });
+
+    db.students=Object.values(studentMap);
+    save();
+    refresh();
+    toast("Đã đồng bộ " + db.students.length + " học sinh!");
+  }catch(err){
+    console.error(err);
+    toast("Lỗi tải dữ liệu!");
+  }
 }
 
 function openStudentModal(id=null){
