@@ -234,7 +234,16 @@ function render(){
   const classFilter=document.getElementById('classFilter').value;
   const normalizeClass=value=>String(value||'').trim().toLocaleLowerCase('vi');
   const rows=db.students.filter(s=>(!classFilter||normalizeClass(s.className)===normalizeClass(classFilter))&&String(s.fullName||'').toLowerCase().includes(q));
-  const uniqueRows=uniqueStudentsByName(rows);
+  const uniqueRows=uniqueStudentsByName(rows).sort((a,b)=>{
+    const parts=name=>String(name||'').trim().split(/\s+/).filter(Boolean);
+    const aParts=parts(a.fullName), bParts=parts(b.fullName);
+    const aGiven=aParts.pop()||'', bGiven=bParts.pop()||'';
+    const aSurname=aParts.shift()||'', bSurname=bParts.shift()||'';
+    const aMiddle=aParts.join(' '), bMiddle=bParts.join(' ');
+    return aGiven.localeCompare(bGiven,'vi') ||
+      aMiddle.localeCompare(bMiddle,'vi') ||
+      aSurname.localeCompare(bSurname,'vi');
+  });
   document.getElementById('classTitle').textContent=classFilter||'Tất cả lớp';
   document.getElementById('studentCount').textContent=`${uniqueRows.length} Học Sinh`;
   document.getElementById('statStudents').textContent=uniqueRows.length;
