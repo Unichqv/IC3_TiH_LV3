@@ -3,7 +3,7 @@
 ========================================================= */
 
 const SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwfu_GYJpkin4655KGvMW1C96HIR42QJs26A3wEb-7D0avwU3ZGD7sXcXkTREP0Tlek1g/exec";;
+  "https://script.google.com/macros/s/AKfycbxzEgOwFhQxaXCZCvIR6BsHLyg3rUpTFu-ahjmkTXD97DoW1039ocw3Yep31lcC7WS-/exec";
 
 /* =========================================================
    CẤU HÌNH
