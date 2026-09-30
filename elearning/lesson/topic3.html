@@ -46,6 +46,42 @@ const quiz = {
     { type: "h3", text: "Màu trắng<br>39°C" }
   ]
 },
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thông tin là gì?" },
+    { type: "p", text: "Thông tin là dữ liệu đã được sắp xếp hoặc xử lý để tạo ra ý nghĩa." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Áo khoác có màu trắng<br>Hôm nay nhiệt độ là 39°C" }
+  ]
+},
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Kiến thức là gì?" },
+    { type: "p", text: "Kiến thức là điều con người hiểu, biết áp dụng và giải thích được từ thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Nón màu trắng giúp cảm thấy mát hơn khi trời nắng.<br>Cần dừng lại khi đèn giao thông màu đỏ để đảm bảo an toàn." }
+  ]
+},
+
+{
+  type: "slide",
+  title: "Dữ liệu - Thông tin - Kiến thức",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Dữ liệu, thông tin và kiến thức khi dùng AI" },
+    { type: "p", text: "Dữ liệu có thể là câu hỏi hoặc tài liệu em nhập vào AI." },
+    { type: "p", text: "Câu trả lời của AI là thông tin đầu ra." },
+    { type: "p", text: "Câu trả lời chỉ trở thành kiến thức của em khi em đọc, kiểm tra, hiểu và biết sử dụng đúng." }
+  ]
+},
 
 {
   type: "radio",
@@ -59,19 +95,6 @@ const quiz = {
   ],
   correct: 1,
   explain: "Các số 28°C, 30°C, 32°C là dữ liệu ban đầu được ghi lại, chưa được xử lý để tạo ra ý nghĩa."
-},
-
-{
-  type: "slide",
-  title: "Dữ liệu - Thông tin - Kiến thức",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Thông tin là gì?" },
-    { type: "p", text: "Thông tin là dữ liệu đã được sắp xếp hoặc xử lý để tạo ra ý nghĩa." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Áo khoác có màu trắng<br>Hôm nay nhiệt độ là 39°C" }
-  ]
 },
 
 {
@@ -89,19 +112,6 @@ const quiz = {
 },
 
 {
-  type: "slide",
-  title: "Dữ liệu - Thông tin - Kiến thức",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Kiến thức là gì?" },
-    { type: "p", text: "Kiến thức là điều con người hiểu, biết áp dụng và giải thích được từ thông tin." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Nón màu trắng giúp cảm thấy mát hơn khi trời nắng.<br>Cần dừng lại khi đèn giao thông màu đỏ để đảm bảo an toàn." }
-  ]
-},
-
-{
   type: "radio",
   category: "Dữ liệu – Thông tin – Kiến thức",
   text: "Câu 3. Tình huống nào sau đây thể hiện kiến thức?",
@@ -113,18 +123,6 @@ const quiz = {
   ],
   correct: 2,
   explain: "Kiến thức là điều con người hiểu, biết áp dụng và giải thích được. Minh hiểu ý nghĩa của đèn đỏ và biết áp dụng vào thực tế để đảm bảo an toàn."
-},
-
-{
-  type: "slide",
-  title: "Dữ liệu - Thông tin - Kiến thức",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Dữ liệu, thông tin và kiến thức khi dùng AI" },
-    { type: "p", text: "Dữ liệu có thể là câu hỏi hoặc tài liệu em nhập vào AI." },
-    { type: "p", text: "Câu trả lời của AI là thông tin đầu ra." },
-    { type: "p", text: "Câu trả lời chỉ trở thành kiến thức của em khi em đọc, kiểm tra, hiểu và biết sử dụng đúng." }
-  ]
 },
 
 {
@@ -152,13 +150,69 @@ const quiz = {
   duration: 4,
   content: [
     { type: "h1", text: "Độ chính xác là gì?" },
-    { type: "p", text: "Độ chính xác cho biết thông tin có đúng với sự thật hay không." },
+    { type: "p", text: "Mức độ mà thông tin đó phản ánh đúng sự thật ." },
 
     { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Một thông tin được kiểm tra và xác nhận là đúng với sự thật." }
+    { type: "h3", text: "Nước sôi ở 100°C" },
+    { type: "h3", text: "Nước sôi ở 80°C" }
+  ]
+},
+    
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Độ tin cậy là gì?" },
+    { type: "p", text: "Mức độ mà chúng ta tin tưởng vào nguổn thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Một Website giáo dục về thiên văn học có nguồn thông tin rõ ràng đáng tin cậy hơn một bài viết không rõ nguồn trên mạng xã hội." }
+  ]
+},
+    
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Tính hợp lệ là gì?" },
+    { type: "p", text: "Bao gồm đảm bảo tính đáng tin cậy và phán ánh chính xác của thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Khi tìm thông tin để chọn một chiếc máy tính cho việc học trực tuyến, cần sử dụng thông tin về cấu hình, giá cả và tính năng phù hợp với nhu cầu học tập." },
+    { type: "h3", text: "Khi tìm thông tin về một chiếc máy tính, nếu yêu cầu là tìm giá bán, thì thông tin về màu sắc của máy không phù hợp với yêu cầu." }
+  ]
+},
+    
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Mức độ liên quan là gì?" },
+    { type: "p", text: "Mức độ liên quan là mức độ áp dụng hoặc hữu ích của thông tin." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Khi tìm hiểu về các hành tinh, trang web cung cấp thông tin thiên văn học sẽ giúp em có thông tin liên quan trực tiếp đến chủ đề." }
   ]
 },
 
+{
+  type: "slide",
+  title: "Đánh giá thông tin",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Đánh giá kết quả đầu ra của AI" },
+    { type: "p", text: "AI có thể đưa ra câu trả lời nghe hợp lí nhưng vẫn có thể sai." },
+
+    { type: "h2", text: "Cần đánh giá" },
+    { type: "p", text: "Chính xác - Đáng tin cậy - Hợp lệ - Liên quan" },
+
+    { type: "p", text: "Không nên dùng AI làm nguồn duy nhất cho thông tin quan trọng." }
+  ]
+},
+    
 {
   type: "radio",
   category: "Đánh giá thông tin",
@@ -171,19 +225,6 @@ const quiz = {
   ],
   correct: 1,
   explain: "Độ chính xác liên quan đến việc thông tin có đúng hay không. Vì vậy cần kiểm tra và đối chiếu thông tin với các nguồn đáng tin cậy."
-},
-
-{
-  type: "slide",
-  title: "Đánh giá thông tin",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Độ tin cậy là gì?" },
-    { type: "p", text: "Độ tin cậy cho biết nguồn cung cấp thông tin có đáng tin hay không." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Một Website giáo dục về thiên văn học có nguồn thông tin rõ ràng đáng tin cậy hơn một bài viết không rõ nguồn trên mạng xã hội." }
-  ]
 },
 
 {
@@ -200,18 +241,7 @@ const quiz = {
   explain: "Độ tin cậy liên quan đến việc nguồn cung cấp thông tin có đáng tin hay không. Nguồn có thông tin rõ ràng và phù hợp với nội dung cần tìm có cơ sở để được đánh giá đáng tin cậy hơn."
 },
 
-{
-  type: "slide",
-  title: "Đánh giá thông tin",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Tính hợp lệ là gì?" },
-    { type: "p", text: "Tính hợp lệ giúp xác định thông tin có phù hợp với yêu cầu và mục đích sử dụng hay không." },
 
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Khi tìm thông tin về các hành tinh, cần sử dụng thông tin phù hợp với yêu cầu của bài học." }
-  ]
-},
 
 {
   type: "radio",
@@ -228,19 +258,6 @@ const quiz = {
 },
 
 {
-  type: "slide",
-  title: "Đánh giá thông tin",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Mức độ liên quan là gì?" },
-    { type: "p", text: "Mức độ liên quan cho biết thông tin có liên quan đến vấn đề hoặc câu hỏi đang tìm hiểu hay không." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Khi tìm hiểu về các hành tinh, thông tin về Sao Hỏa có liên quan trực tiếp đến chủ đề." }
-  ]
-},
-
-{
   type: "radio",
   category: "Đánh giá thông tin",
   text: "Câu 4. Nam đang tìm hiểu về các hành tinh trong hệ Mặt Trời. Thông tin nào sau đây liên quan trực tiếp đến chủ đề?",
@@ -252,21 +269,6 @@ const quiz = {
   ],
   correct: 0,
   explain: "Mức độ liên quan cho biết thông tin có liên quan đến vấn đề hoặc câu hỏi đang tìm hiểu hay không. Đặc điểm của Sao Hỏa liên quan trực tiếp đến chủ đề các hành tinh."
-},
-
-{
-  type: "slide",
-  title: "Đánh giá thông tin",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Đánh giá kết quả đầu ra của AI" },
-    { type: "p", text: "AI có thể đưa ra câu trả lời nghe hợp lí nhưng vẫn có thể sai." },
-
-    { type: "h2", text: "Cần đánh giá" },
-    { type: "p", text: "Chính xác - Đáng tin cậy - Hợp lệ - Liên quan" },
-
-    { type: "p", text: "Không nên dùng AI làm nguồn duy nhất cho thông tin quan trọng." }
-  ]
 },
 
 {
@@ -300,6 +302,31 @@ const quiz = {
     { type: "h3", text: "Một học sinh thấy một bài hát thú vị.<br>Một học sinh khác lại thấy bài hát nhàm chán.<br>→ Hai bạn có quan điểm khác nhau." }
   ]
 },
+    
+{
+  type: "slide",
+  title: "Quan điểm và thiên kiến",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thiên kiến là gì?" },
+    { type: "p", text: "Thiên kiến là cách một người đánh giá, trình bày hoặc chia sẻ thông tin dựa trên niềm tin và quan điểm cá nhân, có thể làm cho người đó không công bằng và bỏ qua các quan điểm khác." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "“Tớ biết bạn ấy ghét khoa học vì bạn ấy chẳng bao giờ tham gia hội chợ khoa học nào.”<br>→ Nhận xét dựa trên suy đoán cá nhân." }
+  ]
+},
+{
+  type: "slide",
+  title: "Quan điểm và thiên kiến",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Thiên kiến trong kết quả của AI" },
+    { type: "p", text: "AI có thể phản ánh thiên kiến từ dữ liệu mà AI học được hoặc từ cách con người đặt câu hỏi." },
+
+    { type: "h2", text: "Cần làm gì?" },
+    { type: "h3", text: "Đặt câu hỏi công bằng.<br>Kiểm tra thông tin.<br>Tôn trọng các quan điểm khác nhau." }
+  ]
+},
 
 {
   type: "radio",
@@ -316,19 +343,6 @@ const quiz = {
 },
 
 {
-  type: "slide",
-  title: "Quan điểm và thiên kiến",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Thiên kiến là gì?" },
-    { type: "p", text: "Thiên kiến là cách một người đánh giá, trình bày hoặc chia sẻ thông tin dựa trên niềm tin và quan điểm cá nhân, có thể làm cho người đó không công bằng và bỏ qua các quan điểm khác." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "“Tớ biết bạn ấy ghét khoa học vì bạn ấy chẳng bao giờ tham gia hội chợ khoa học nào.”<br>→ Nhận xét dựa trên suy đoán cá nhân." }
-  ]
-},
-
-{
   type: "radio",
   category: "Quan điểm và thiên kiến",
   text: "Câu 2. Phát biểu nào sau đây có chứa thiên kiến?",
@@ -340,19 +354,6 @@ const quiz = {
   ],
   correct: 2,
   explain: "Phát biểu cho rằng Orson ghét khoa học dựa trên việc bạn ấy không tham gia hội chợ khoa học là một suy đoán từ quan điểm cá nhân, vì vậy có chứa thiên kiến."
-},
-
-{
-  type: "slide",
-  title: "Quan điểm và thiên kiến",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Thiên kiến trong kết quả của AI" },
-    { type: "p", text: "AI có thể phản ánh thiên kiến từ dữ liệu mà AI học được hoặc từ cách con người đặt câu hỏi." },
-
-    { type: "h2", text: "Cần làm gì?" },
-    { type: "h3", text: "Đặt câu hỏi công bằng.<br>Kiểm tra thông tin.<br>Tôn trọng các quan điểm khác nhau." }
-  ]
 },
 
 {
@@ -402,6 +403,55 @@ const quiz = {
 },
 
 {
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Bình luận là gì?" },
+    { type: "p", text: "Bình luận là những ý kiến, nhận xét hoặc phản hồi của người dùng về nội dung trên mạng xã hội, Blog hoặc Website." },
+
+    { type: "h2", text: "Lưu ý" },
+    { type: "h3", text: "Bình luận có thể cung cấp nhiều góc nhìn nhưng cần đánh giá độ chính xác và độ tin cậy." }
+  ]
+},
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Diễn đàn là gì?" },
+    { type: "p", text: "Diễn đàn là các Website thảo luận trực tuyến, thường được trình bày dưới dạng câu hỏi và câu trả lời." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Người tham gia có thể đặt câu hỏi, chia sẻ hoặc trao đổi ý kiến về một chủ đề." }
+  ]
+},
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "Nguồn thông tin đáng tin cậy" },
+    { type: "p", text: "Nguồn đáng tin cậy cần có tác giả hoặc tổ chức rõ ràng, có bằng chứng và mục đích cung cấp thông tin rõ ràng." },
+
+    { type: "h2", text: "Ví dụ" },
+    { type: "h3", text: "Sách giáo khoa<br>Website chính thức<br>Bách khoa toàn thư trực tuyến được nhà trường giới thiệu" }
+  ]
+},
+{
+  type: "slide",
+  title: "Nguồn thông tin đáng tin cậy",
+  duration: 4,
+  content: [
+    { type: "h1", text: "So sánh kết quả của AI với các nguồn khác" },
+    { type: "p", text: "AI có thể hỗ trợ gợi ý và giải thích thông tin nhưng không thay thế nguồn gốc của thông tin." },
+
+    { type: "h2", text: "Cách kiểm tra" },
+    { type: "h3", text: "Đọc câu trả lời của AI.<br>Kiểm tra bằng sách giáo khoa hoặc nguồn đáng tin cậy khác.<br>So sánh các thông tin tìm được." }
+  ]
+},
+
+{
   type: "radio",
   category: "Nguồn thông tin đáng tin cậy",
   text: "Câu 1. Điều gì cần lưu ý khi sử dụng thông tin trên truyền thông xã hội?",
@@ -413,19 +463,6 @@ const quiz = {
   ],
   correct: 2,
   explain: "Thông tin trên truyền thông xã hội có thể lan truyền nhanh chóng nhưng cũng có thể chứa thông tin không chính xác hoặc tin đồn. Vì vậy cần kiểm tra nguồn gốc và tính xác thực."
-},
-
-{
-  type: "slide",
-  title: "Nguồn thông tin đáng tin cậy",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Bình luận là gì?" },
-    { type: "p", text: "Bình luận là những ý kiến, nhận xét hoặc phản hồi của người dùng về nội dung trên mạng xã hội, Blog hoặc Website." },
-
-    { type: "h2", text: "Lưu ý" },
-    { type: "h3", text: "Bình luận có thể cung cấp nhiều góc nhìn nhưng cần đánh giá độ chính xác và độ tin cậy." }
-  ]
 },
 
 {
@@ -442,18 +479,6 @@ const quiz = {
   explain: "Bình luận có thể cung cấp những góc nhìn khác nhau nhưng cần được đánh giá để xác định tính chính xác và đáng tin cậy của thông tin."
 },
 
-{
-  type: "slide",
-  title: "Nguồn thông tin đáng tin cậy",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Diễn đàn là gì?" },
-    { type: "p", text: "Diễn đàn là các Website thảo luận trực tuyến, thường được trình bày dưới dạng câu hỏi và câu trả lời." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Người tham gia có thể đặt câu hỏi, chia sẻ hoặc trao đổi ý kiến về một chủ đề." }
-  ]
-},
 
 {
   type: "radio",
@@ -470,19 +495,6 @@ const quiz = {
 },
 
 {
-  type: "slide",
-  title: "Nguồn thông tin đáng tin cậy",
-  duration: 4,
-  content: [
-    { type: "h1", text: "Nguồn thông tin đáng tin cậy" },
-    { type: "p", text: "Nguồn đáng tin cậy cần có tác giả hoặc tổ chức rõ ràng, có bằng chứng và mục đích cung cấp thông tin rõ ràng." },
-
-    { type: "h2", text: "Ví dụ" },
-    { type: "h3", text: "Sách giáo khoa<br>Website chính thức<br>Bách khoa toàn thư trực tuyến được nhà trường giới thiệu" }
-  ]
-},
-
-{
   type: "radio",
   category: "Nguồn thông tin đáng tin cậy",
   text: "Câu 4. Lan cần tìm thông tin để làm bài học. Nguồn nào sau đây có cơ sở để được xem là đáng tin cậy hơn?",
@@ -494,19 +506,6 @@ const quiz = {
   ],
   correct: 2,
   explain: "Nguồn đáng tin cậy cần rõ tác giả hoặc tổ chức, có bằng chứng và mục đích cung cấp thông tin rõ ràng."
-},
-
-{
-  type: "slide",
-  title: "Nguồn thông tin đáng tin cậy",
-  duration: 4,
-  content: [
-    { type: "h1", text: "So sánh kết quả của AI với các nguồn khác" },
-    { type: "p", text: "AI có thể hỗ trợ gợi ý và giải thích thông tin nhưng không thay thế nguồn gốc của thông tin." },
-
-    { type: "h2", text: "Cách kiểm tra" },
-    { type: "h3", text: "Đọc câu trả lời của AI.<br>Kiểm tra bằng sách giáo khoa hoặc nguồn đáng tin cậy khác.<br>So sánh các thông tin tìm được." }
-  ]
 },
 
 {
