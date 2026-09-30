@@ -32,13 +32,6 @@ const quiz = {
   title: "ÔN TẬP CHỦ ĐỀ 3 - TEST 1",
   questions: [
     {
-      type: "fill-in-blank",
-      category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Dòng chữ “39°C” chưa được giải thích trên ứng dụng thời tiết được gọi là ____.",
-      answers: ["dữ liệu"],
-      explain: "Dữ liệu là các con số, văn bản, hình ảnh thô chưa qua xử lý hay giải thích cụ thể."
-    },
-    {
       type: "radio",
       category: "Dữ liệu – Thông tin – Kiến thức",
       text: "Sau khi xem ứng dụng, Lan biết “Hôm nay nhiệt độ là 39°C”. Nội dung này thuộc loại nào?",
@@ -64,13 +57,6 @@ const quiz = {
       explain: "Tín hiệu, hình ảnh, âm thanh thô thu được trực tiếp từ thiết bị là dữ liệu."
     },
     {
-      type: "fill-in-blank",
-      category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Bảng thống kê điểm trung bình của lớp chủ yếu là ____.",
-      answers: ["thông tin"],
-      explain: "Bảng thống kê điểm trung bình đã qua tính toán, xử lý nên là thông tin."
-    },
-    {
       type: "radio",
       category: "Dữ liệu – Thông tin – Kiến thức",
       text: "Vì sao kiến thức khác với dữ liệu?",
@@ -84,13 +70,6 @@ const quiz = {
       text: "Nối mỗi khái niệm với ví dụ phù hợp.",
       pairs: [["Dữ liệu đầu vào", "Câu hỏi Minh gửi cho AI"], ["Thông tin đầu ra", "Câu trả lời AI gửi lại"], ["Kiến thức", "Điều Minh đã hiểu và có thể áp dụng"]],
       explain: "Câu hỏi được gửi vào là dữ liệu đầu vào; câu trả lời AI đưa ra là thông tin đầu ra; điều Minh hiểu và vận dụng được là kiến thức."
-    },
-    {
-      type: "fill-in-blank",
-      category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Sau khi kiểm tra và hiểu câu trả lời, thông tin đã trở thành ____.",
-      answers: ["kiến thức"],
-      explain: "Khi con người đã tiếp thu, thấu hiểu và chủ động diễn đạt lại thì thông tin trở thành kiến thức."
     },
     {
       type: "binary",
@@ -107,13 +86,7 @@ const quiz = {
       correct: [0, 1, 2],
       explain: "Tiến trình chuẩn: Từ dữ liệu thô xử lý thành thông tin, qua thấu hiểu trở thành kiến thức."
     },
-    {
-      type: "fill-in-blank",
-      category: "Dữ liệu – Thông tin – Kiến thức",
-      text: "Kết luận được rút ra từ dữ liệu và có thể áp dụng gần với khái niệm ____.",
-      answers: ["kiến thức"],
-      explain: "Đây là sự đúc kết mang tính ứng dụng dựa trên tổng hợp các dữ liệu/thông tin."
-    },
+   
     {
       type: "multiple-select",
       category: "Dữ liệu – Thông tin – Kiến thức",
@@ -130,13 +103,7 @@ const quiz = {
       correct: 0,
       explain: "Nhiều lỗi chính tả và mâu thuẫn số liệu là dấu hiệu thiếu tính chính xác."
     },
-    {
-      type: "fill-in-blank",
-      category: "Đánh giá thông tin và AI",
-      text: "Tác giả, tổ chức xuất bản và nguồn trích dẫn giúp đánh giá ____ của thông tin.",
-      answers: ["độ tin cậy", "tin cậy"],
-      explain: "Thông tin có tác giả và tổ chức uy tín bảo chứng sẽ có độ tin cậy cao."
-    },
+  
     {
       type: "visual-choice",
       category: "Đánh giá thông tin và AI",
@@ -176,13 +143,6 @@ const quiz = {
       text: "Nối dấu hiệu của website với cách đánh giá phù hợp.",
       pairs: [["Không ghi tác giả", "Cần tìm hiểu thêm nguồn khác"], ["Không có nguồn tham khảo", "Chưa đủ căn cứ để tin cậy"], ["Giao diện đẹp", "Không tự chứng minh nội dung chính xác"], ["Có nguồn rõ ràng", "Có thể đối chiếu để đánh giá"]],
       explain: "Hãy đánh giá thông tin dựa trên tác giả, nguồn tham khảo và khả năng kiểm chứng; giao diện đẹp không đảm bảo nội dung đúng."
-    },
-    {
-      type: "fill-in-blank",
-      category: "Đánh giá thông tin và AI",
-      text: "Câu trả lời không đúng chủ đề chưa đạt tiêu chí ____.",
-      answers: ["liên quan", "mức độ liên quan"],
-      explain: "Nội dung dài nhưng không đúng trọng tâm yêu cầu là thiếu mức độ liên quan."
     },
     {
       type: "binary",
@@ -324,13 +284,7 @@ const quiz = {
       multipleCorrect: [0, 2],
       explain: "Chỉ đưa tin một chiều hoặc phớt lờ nhược điểm là biểu hiện của bài viết thiên lệch."
     },
-    {
-      type: "fill-in-blank",
-      category: "Quan điểm và thiên kiến",
-      text: "Quan điểm có thể chịu ảnh hưởng bởi kinh nghiệm, kiến thức và ____.",
-      answers: ["niềm tin"],
-      explain: "Niềm tin cá nhân tác động trực tiếp lên cách hình thành quan điểm."
-    },
+  
     {
       type: "matching",
       category: "Quan điểm và thiên kiến",
@@ -385,13 +339,7 @@ const quiz = {
       pairs: [["Website giáo dục có tác giả, tài liệu tham khảo", "Ưu tiên kiểm tra và đối chiếu thêm"], ["Bài đăng mạng xã hội không ghi nguồn", "Không nên tin ngay, cần kiểm chứng"]],
       explain: "Nguồn có tác giả và tài liệu tham khảo rõ ràng thường dễ đánh giá, đối chiếu hơn; nguồn không ghi xuất xứ cần được kiểm chứng."
     },
-    {
-      type: "fill-in-blank",
-      category: "Đánh giá thông tin và AI",
-      text: "Đối chiếu câu trả lời của AI với sách giáo khoa nhằm kiểm tra ____ của thông tin.",
-      answers: ["độ chính xác", "tính chính xác", "chính xác"],
-      explain: "Đối chiếu sách giáo khoa là một phương pháp kiểm tra độ chính xác."
-    },
+ 
     {
       type: "process-order",
       category: "Đánh giá thông tin và AI",
