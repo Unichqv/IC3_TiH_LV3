@@ -538,8 +538,8 @@ function renderExam() {
             </div>
             ${!state.answered ? `
               <div class="order-buttons">
-                <button class="order-btn" ${pos === 0 ? "disabled" : ""} data-up="${pos}">⬆️</button>
-                <button class="order-btn" ${pos === state.order.length - 1 ? "disabled" : ""} data-down="${pos}">⬇️</button>
+                <button class="order-btn" ${pos === 0 ? "disabled" : ""} data-up="${pos}">⏫</button>
+                <button class="order-btn" ${pos === state.order.length - 1 ? "disabled" : ""} data-down="${pos}">⏬</button>
               </div>
             ` : ""}
           </div>
