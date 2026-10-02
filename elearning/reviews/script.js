@@ -1,6 +1,4 @@
-/* =========================================================
-   GOOGLE APPS SCRIPT
-========================================================= */
+
 
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbxzEgOwFhQxaXCZCvIR6BsHLyg3rUpTFu-ahjmkTXD97DoW1039ocw3Yep31lcC7WS-/exec";
@@ -73,13 +71,14 @@ function shuffleQuestionAnswers(question) {
 
 function getInitialLives() {
   const lives = Number(document.getElementById("app")?.dataset.lives);
-  return Number.isInteger(lives) && lives > 0 ? lives : 10;
+  return Number.isInteger(lives) && lives >= 0 ? lives : 10;
 }
 
 let state = {
   screen: "intro",
   name: "",
-  className: "Năm 5",
+  grade: 5,
+  className: "",
   gender: "Không cung cấp",
   index: 0,
   lives: getInitialLives(),
@@ -113,60 +112,189 @@ function normalizeClassName(name) {
   return value.trim();
 }
 
-function getAvailableClasses() {
-  const classes = new Set(["Năm 1", "Năm 2", "Năm 3", "Năm 4", "Năm 5", "Năm 6"]);
+function getGradeNumber(value) {
+  const match = String(value || "").trim().match(/^(?:lớp\s*)?(?:năm\s*)?([1-6])(?=$|[\sA-Za-z])/i);
+  return match ? Number(match[1]) : null;
+}
+
+function getAvailableClasses(grade) {
+  const classes = new Map();
+
+  function addClass(name, explicitGrade) {
+    const normalized = normalizeClassName(name);
+    if (!normalized || /^Năm\s*[1-6]$/i.test(normalized)) return;
+
+    const classGrade = Number(explicitGrade) || getGradeNumber(normalized);
+    if (classGrade === Number(grade)) classes.set(normalized, normalized);
+  }
 
   try {
     const savedClasses = JSON.parse(localStorage.getItem("tinHocClasses_v1") || "[]");
     if (Array.isArray(savedClasses)) {
-      savedClasses.forEach(name => {
-        const normalized = normalizeClassName(name);
-        if (normalized) classes.add(normalized);
+      savedClasses.forEach(item => {
+        if (typeof item === "string") addClass(item);
+        else if (item && typeof item === "object") addClass(item.name || item.className, item.grade);
       });
     }
 
     const db = JSON.parse(localStorage.getItem("tinHocStudentData_v1") || "null");
-    const classInfoName = normalizeClassName(db?.classInfo?.name);
-    if (classInfoName) classes.add(classInfoName);
+    addClass(db?.classInfo?.name, db?.classInfo?.grade);
 
     if (Array.isArray(db?.students)) {
-      db.students.forEach(student => {
-        const className = normalizeClassName(student?.className);
-        if (className) classes.add(className);
-      });
+      db.students.forEach(student => addClass(student?.className, student?.grade));
     }
   } catch (error) {
     console.error("Không thể đọc danh sách lớp đã lưu:", error);
   }
 
-  return [...classes];
+  return [...classes.keys()].sort((a, b) => a.localeCompare(b, "vi", { numeric: true }));
 }
 
-function populateClassOptions() {
-  const select = document.getElementById("className");
-  if (!select) return;
+async function getSpreadsheetSheetNames() {
+  if (!SCRIPT_URL) return [];
+  try {
+    const response = await fetch(SCRIPT_URL, { cache: "no-store" });
+    const sheets = await response.json();
+    return Array.isArray(sheets) ? sheets.filter(name => typeof name === "string") : [];
+  } catch (error) {
+    console.error("Không thể tải danh sách lớp từ Google Sheets:", error);
+    return [];
+  }
+}
 
-  const currentValue = normalizeClassName(select.value || state.className || "Năm 5");
-  const classes = getAvailableClasses();
+async function getStudentNamesForClass(className) {
+  const names = new Set();
 
-  select.replaceChildren();
+  try {
+    const db = JSON.parse(localStorage.getItem("tinHocStudentData_v1") || "null");
+    if (Array.isArray(db?.students)) {
+      db.students.forEach(student => {
+        if (normalizeClassName(student?.className) === normalizeClassName(className)) {
+          const name = String(student?.fullName || student?.name || "").trim();
+          if (name) names.add(name);
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Không thể đọc danh sách học sinh đã lưu:", error);
+  }
+
+  if (SCRIPT_URL) {
+    try {
+      const url = `${SCRIPT_URL}?className=${encodeURIComponent(className)}`;
+      const response = await fetch(url, { cache: "no-store" });
+      const rows = await response.json();
+      if (Array.isArray(rows)) {
+        rows.slice(1).forEach(row => {
+          const name = Array.isArray(row) ? String(row[1] || "").trim() : "";
+          if (name) names.add(name);
+        });
+      }
+    } catch (error) {
+      console.error("Không thể tải danh sách học sinh từ Google Sheets:", error);
+    }
+  }
+
+  const compareVietnamese = (a, b) =>
+    a.localeCompare(b, "vi", { sensitivity: "base" });
+  const getNameParts = fullName => String(fullName).trim().split(/\s+/).filter(Boolean);
+
+  return [...names].sort((a, b) => {
+    const partsA = getNameParts(a);
+    const partsB = getNameParts(b);
+    const nameA = partsA.pop() || "";
+    const nameB = partsB.pop() || "";
+    const nameComparison = compareVietnamese(nameA, nameB);
+    if (nameComparison !== 0) return nameComparison;
+
+    const middleA = partsA.reverse();
+    const middleB = partsB.reverse();
+    const length = Math.min(middleA.length, middleB.length);
+    for (let i = 0; i < length; i++) {
+      const middleComparison = compareVietnamese(middleA[i], middleB[i]);
+      if (middleComparison !== 0) return middleComparison;
+    }
+
+    return middleA.length - middleB.length || compareVietnamese(a, b);
+  });
+}
+
+async function populateStudentOptions(className) {
+  const studentSelect = document.getElementById("studentName");
+  if (!studentSelect) return;
+
+  studentSelect.replaceChildren();
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = className ? "Đang tải danh sách học sinh..." : "Trước tiên hãy chọn lớp";
+  studentSelect.appendChild(placeholder);
+  studentSelect.disabled = true;
+
+  if (!className) return;
+
+  const names = await getStudentNamesForClass(className);
+  if (!studentSelect.isConnected || normalizeClassName(document.getElementById("className")?.value) !== normalizeClassName(className)) return;
+
+  studentSelect.replaceChildren();
+  const optionPlaceholder = document.createElement("option");
+  optionPlaceholder.value = "";
+  optionPlaceholder.textContent = names.length ? "-- Chọn họ và tên --" : "Chưa có học sinh trong lớp này";
+  studentSelect.appendChild(optionPlaceholder);
+
+  names.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    studentSelect.appendChild(option);
+  });
+  studentSelect.disabled = names.length === 0;
+}
+
+async function populateClassOptions() {
+  const classSelect = document.getElementById("className");
+  if (!classSelect) return;
+
+  const currentValue = normalizeClassName(classSelect.value || state.className);
+  classSelect.disabled = true;
+  classSelect.replaceChildren();
+
+  const loading = document.createElement("option");
+  loading.value = "";
+  loading.textContent = "Đang tải danh sách lớp...";
+  classSelect.appendChild(loading);
+
+  const localClasses = [1, 2, 3, 4, 5, 6].flatMap(getAvailableClasses);
+  const sheetNames = await getSpreadsheetSheetNames();
+  const classes = [...new Set([
+    ...localClasses,
+    ...sheetNames.map(normalizeClassName).filter(Boolean)
+  ])].sort((a, b) => a.localeCompare(b, "vi", { numeric: true }));
+
+  if (!classSelect.isConnected) return;
+  classSelect.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = classes.length ? "-- Chọn lớp --" : "Chưa có lớp";
+  classSelect.appendChild(placeholder);
 
   classes.forEach(name => {
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;
-    select.appendChild(option);
+    classSelect.appendChild(option);
   });
 
+  classSelect.disabled = classes.length === 0;
   if (classes.includes(currentValue)) {
-    select.value = currentValue;
+    classSelect.value = currentValue;
     state.className = currentValue;
-  } else if (classes.includes("Năm 5")) {
-    select.value = "Năm 5";
-    state.className = "Năm 5";
-  } else if (classes.length > 0) {
-    select.value = classes[0];
-    state.className = classes[0];
+    state.grade = getGradeNumber(currentValue) || state.grade;
+    await populateStudentOptions(currentValue);
+  } else {
+    classSelect.value = "";
+    state.className = "";
+    await populateStudentOptions("");
   }
 }
 
@@ -206,13 +334,15 @@ function renderIntro() {
           <h1>${quiz.title}<br></h1>
           <form id="startForm" class="form-group">
             <div style="margin-bottom:16px;">
-              <label>Chọn Lớp Học</label>
+              <label for="className">Chọn lớp</label>
               <select id="className"></select>
             </div>
 
             <div>
-              <label>Họ và Tên Dũng Sĩ <span style="color:#f44336;">*</span></label>
-              <input id="studentName" type="text" placeholder="Nhập họ và tên của em..." required>
+              <label for="studentName">Chọn họ và tên học sinh <span style="color:#f44336;">*</span></label>
+              <select id="studentName" required disabled>
+                <option value="">Trước tiên hãy chọn lớp</option>
+              </select>
             </div>
 
             <div id="startError"></div>
@@ -226,19 +356,30 @@ function renderIntro() {
 
   populateClassOptions();
 
+  document.getElementById("className").onchange = event => {
+    state.className = normalizeClassName(event.target.value);
+    state.grade = getGradeNumber(state.className) || state.grade;
+    state.name = "";
+    populateStudentOptions(state.className);
+  };
+
+  document.getElementById("studentName").onchange = event => {
+    state.name = event.target.value.trim();
+  };
+
   document.getElementById("startForm").onsubmit = event => {
     event.preventDefault();
     const name = document.getElementById("studentName").value.trim();
     const className = document.getElementById("className").value.trim();
     const errorBox = document.getElementById("startError");
 
-    if (!name) {
-      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng nhập họ và tên của em!</div>`;
+    if (!className) {
+      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng chọn lớp!</div>`;
       return;
     }
 
-    if (!className) {
-      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng chọn lớp!</div>`;
+    if (!name) {
+      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng chọn họ và tên học sinh!</div>`;
       return;
     }
 
@@ -311,7 +452,7 @@ function answer(correct) {
   if (correct) {
     state.correct++;
     state.score += 100 + (state.correct > 1 ? state.correct * 15 : 0);
-  } else {
+  } else if (getInitialLives() > 0) {
     state.lives = Math.max(0, state.lives - 1);
   }
 
@@ -323,7 +464,7 @@ function answer(correct) {
 ========================================================= */
 
 function next() {
-  if (state.lives <= 0) {
+  if (getInitialLives() > 0 && state.lives <= 0) {
     saveResult();
     state.screen = "failed";
     render();
@@ -538,8 +679,8 @@ function renderExam() {
             </div>
             ${!state.answered ? `
               <div class="order-buttons">
-                <button class="order-btn" ${pos === 0 ? "disabled" : ""} data-up="${pos}">⏫</button>
-                <button class="order-btn" ${pos === state.order.length - 1 ? "disabled" : ""} data-down="${pos}">⏬</button>
+                <button class="order-btn" ${pos === 0 ? "disabled" : ""} data-up="${pos}">⬆️</button>
+                <button class="order-btn" ${pos === state.order.length - 1 ? "disabled" : ""} data-down="${pos}">⬇️</button>
               </div>
             ` : ""}
           </div>
@@ -560,7 +701,7 @@ function renderExam() {
         <div class="card">
           <div class="hud">
             <div class="hud-stats">
-              <span class="stat-badge life"><svg class="heart-icon" aria-hidden="true"><use href="#heart-icon"></use></svg> ${state.lives}</span>
+              ${getInitialLives() > 0 ? `<span class="stat-badge life"><svg class="heart-icon" aria-hidden="true"><use href="#heart-icon"></use></svg> ${state.lives}</span>` : ""}
               <span class="stat-badge score">⭐ ${state.score}</span>
               ${state.correct >= 2 ? `<span class="stat-badge combo">🔥 x${state.correct}</span>` : ""}
             </div>
@@ -753,6 +894,7 @@ function saveResult() {
     fullName: state.name,
     className: state.className,
     examTitle: quiz.title,
+    gender: state.gender,
     score: score10,
     correctAnswers: state.correct,
     wrongAnswers: activeQuestions.length - state.correct,
@@ -773,9 +915,9 @@ function saveResult() {
     db = {
       version: "1.0",
       classInfo: {
-        name: state.className || "Năm 5",
-        grade: 5,
-        description: "Lớp Tin học nâng cao khối 5"
+        name: state.className,
+        grade: state.grade,
+        description: `Lớp Tin học nâng cao khối ${state.grade}`
       },
       students: []
     };
@@ -787,9 +929,9 @@ function saveResult() {
 
   db.classInfo = {
     ...(db.classInfo || {}),
-    name: normalizeClassName(state.className) || "Năm 5",
-    grade: 5,
-    description: "Lớp Tin học nâng cao khối 5"
+    name: normalizeClassName(state.className),
+    grade: state.grade,
+    description: `Lớp Tin học nâng cao khối ${state.grade}`
   };
 
   let student = db.students.find(
@@ -800,8 +942,8 @@ function saveResult() {
     student = {
       studentId: "HS" + String(Date.now()).slice(-6),
       fullName: state.name,
-      className: normalizeClassName(state.className) || "Năm 5",
-      grade: 5,
+      className: normalizeClassName(state.className),
+      grade: state.grade,
       gender: state.gender,
       exams: []
     };
@@ -849,7 +991,7 @@ function saveResult() {
     fetch(SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(payload)
     }).catch(error => console.error("Lỗi gửi Google Apps Script:", error));
   }
@@ -868,12 +1010,11 @@ function renderResult() {
         <div class="card result-card">
           <div class="trophy">🏆</div>
           <h1>HOÀN THÀNH THỬ THÁCH!</h1>
-          <p>Chúc mừng <strong>${state.name}</strong> (${state.className}) đã xuất sắc hoàn thành bài thi!</p>
+          <p>Chúc mừng <strong>${state.name}</strong> đã xuất sắc hoàn thành bài thi!</p>
           
           <div class="score-big">${score10} / 10 Điểm</div>
           
           <div class="info-box">
-            <p><strong>Tổng điểm trò chơi:</strong> ⭐ ${state.score}</p>
             <p><strong>Số câu đúng:</strong> ${state.correct} / ${activeQuestions.length}</p>
             <p><strong>Lần làm bài:</strong> Lần ${state.attemptNumber || 1}</p>
           </div>
