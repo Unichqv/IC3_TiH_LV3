@@ -76,7 +76,8 @@ function getInitialLives() {
 let state = {
   screen: "intro",
   name: "",
-  className: "Năm 5",
+  grade: 5,
+  className: "",
   gender: "Không cung cấp",
   index: 0,
   lives: getInitialLives(),
@@ -111,43 +112,210 @@ function normalizeClassName(name) {
   return value.trim();
 }
 
-function getAvailableClasses() {
-  const classes = new Set(["Năm 1", "Năm 2", "Năm 3", "Năm 4", "Năm 5", "Năm 6"]);
+function getGradeNumber(value) {
+  const match = String(value || "").trim().match(/^(?:lớp\s*)?(?:năm\s*)?([1-6])(?=$|[\sA-Za-z])/i);
+  return match ? Number(match[1]) : null;
+}
+
+function getAvailableClasses(grade) {
+  const classes = new Map();
+
+  function addClass(value, explicitGrade) {
+    const name = typeof value === "string"
+      ? value
+      : value?.className ?? value?.name ?? value?.class;
+    const normalized = normalizeClassName(name);
+    if (!normalized || /^Năm\s*[1-6]$/i.test(normalized)) return;
+
+    const classGrade = Number(explicitGrade) || getGradeNumber(normalized);
+    if (classGrade === Number(grade)) classes.set(normalized, normalized);
+  }
 
   try {
     const savedClasses = JSON.parse(localStorage.getItem("tinHocClasses_v1") || "[]");
-    if (Array.isArray(savedClasses)) {
-      savedClasses.forEach(name => {
-        const normalized = normalizeClassName(name);
-        if (normalized) classes.add(normalized);
-      });
+    const classList = Array.isArray(savedClasses)
+      ? savedClasses
+      : savedClasses?.classes ?? savedClasses?.data ?? [];
+    if (Array.isArray(classList)) {
+      classList.forEach(item => addClass(item));
     }
 
     const db = JSON.parse(localStorage.getItem("tinHocStudentData_v1") || "null");
-    const classInfoName = normalizeClassName(db?.classInfo?.name);
-    if (classInfoName) classes.add(classInfoName);
+    addClass(db?.classInfo, db?.classInfo?.grade);
 
     if (Array.isArray(db?.students)) {
-      db.students.forEach(student => {
-        const className = normalizeClassName(student?.className);
-        if (className) classes.add(className);
-      });
+      db.students.forEach(student => addClass(student?.className, student?.grade));
     }
   } catch (error) {
     console.error("Không thể đọc danh sách lớp đã lưu:", error);
   }
 
-  return [...classes];
+  return [...classes.keys()].sort((a, b) => a.localeCompare(b, "vi", { numeric: true }));
 }
 
-function populateClassOptions() {
+async function getSpreadsheetSheetNames() {
+  if (!SCRIPT_URL) return [];
+  try {
+    const response = await fetch(SCRIPT_URL, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const result = await response.json();
+    const sheets = Array.isArray(result)
+      ? result
+      : result?.classes ?? result?.sheets ?? result?.data ?? [];
+
+    return Array.isArray(sheets)
+      ? sheets.map(item => typeof item === "string" ? item : item?.className ?? item?.name ?? item?.class ?? "").filter(Boolean)
+      : [];
+  } catch (error) {
+    console.error("Không thể tải danh sách lớp từ Google Sheets:", error);
+    return [];
+  }
+}
+
+async function getStudentNamesForClass(className) {
+  const names = new Set();
+  let requestFailed = false;
+
+  try {
+    const db = JSON.parse(localStorage.getItem("tinHocStudentData_v1") || "null");
+    if (Array.isArray(db?.students)) {
+      db.students.forEach(student => {
+        if (normalizeClassName(student?.className) === normalizeClassName(className)) {
+          const name = String(student?.fullName || student?.studentName || student?.name || "").trim();
+          if (name) names.add(name);
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Không thể đọc danh sách học sinh đã lưu:", error);
+  }
+
+  const isNameHeader = value => {
+    const header = normalizeHeader(value);
+    return ["fullname", "name", "studentname", "hoten", "hovaten", "tenhocsinh"].includes(header) ||
+      header.startsWith("hoten") || header.startsWith("hovaten") || header.startsWith("fullname");
+  };
+
+  const getRows = result => {
+    if (Array.isArray(result)) return result;
+    if (!result || typeof result !== "object") return [];
+    for (const key of ["students", "rows", "data", "names"]) {
+      if (result[key] !== undefined) {
+        const nested = getRows(result[key]);
+        if (nested.length) return nested;
+        if (Array.isArray(result[key])) return result[key];
+      }
+    }
+    return [];
+  };
+
+  const addRows = result => {
+    const rows = getRows(result);
+    if (!Array.isArray(rows)) return;
+
+    if (rows.every(row => typeof row === "string")) {
+      rows.forEach(value => {
+        const name = value.trim();
+        if (name && !["họ tên", "họ và tên", "full name", "name"].includes(name.toLocaleLowerCase("vi"))) names.add(name);
+      });
+      return;
+    }
+
+    let firstDataRow = 0;
+    let nameIndex = 1;
+    if (Array.isArray(rows[0])) {
+      const headers = rows[0].map(normalizeHeader);
+      const detectedIndex = headers.findIndex(isNameHeader);
+      if (detectedIndex >= 0) {
+        nameIndex = detectedIndex;
+        firstDataRow = 1;
+      } else if (headers.some(header => ["stt", "id", "mahs", "studentid"].includes(header))) {
+        firstDataRow = 1;
+      }
+    }
+
+    rows.slice(firstDataRow).forEach(row => {
+      let name = "";
+      if (Array.isArray(row)) {
+        name = String(row[nameIndex] ?? row[1] ?? row[0] ?? "").trim();
+      } else if (row && typeof row === "object") {
+        const fields = Object.entries(row);
+        const match = fields.find(([key]) => isNameHeader(key));
+        name = String(match?.[1] ?? "").trim();
+      }
+      if (name && !["họ tên", "họ và tên", "full name", "name"].includes(name.toLocaleLowerCase("vi"))) names.add(name);
+    });
+  };
+
+  if (SCRIPT_URL) {
+    const rawClassName = String(className || "").trim();
+    const normalizedClassName = normalizeClassName(rawClassName);
+    const classAliases = [...new Set([rawClassName, normalizedClassName, `Lớp ${normalizedClassName}`].filter(Boolean))];
+    let receivedResponse = false;
+
+    for (const requestedClass of classAliases) {
+      try {
+        const url = `${SCRIPT_URL}?className=${encodeURIComponent(requestedClass)}`;
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        addRows(await response.json());
+        receivedResponse = true;
+        if (names.size) break;
+      } catch (error) {
+        requestFailed = true;
+        console.error(`Không thể tải học sinh lớp ${requestedClass} từ Google Sheets:`, error);
+      }
+    }
+    requestFailed = requestFailed && !receivedResponse;
+  }
+
+  const compareVietnamese = (a, b) => a.localeCompare(b, "vi", { sensitivity: "base" });
+  const getNameParts = fullName => String(fullName).trim().split(/\s+/).filter(Boolean);
+  const sortedNames = [...names].sort((a, b) => {
+    const partsA = getNameParts(a);
+    const partsB = getNameParts(b);
+    const nameComparison = compareVietnamese(partsA.pop() || "", partsB.pop() || "");
+    if (nameComparison !== 0) return nameComparison;
+    const middleA = partsA.reverse();
+    const middleB = partsB.reverse();
+    const length = Math.min(middleA.length, middleB.length);
+    for (let i = 0; i < length; i++) {
+      const middleComparison = compareVietnamese(middleA[i], middleB[i]);
+      if (middleComparison !== 0) return middleComparison;
+    }
+    return middleA.length - middleB.length || compareVietnamese(a, b);
+  });
+
+  return { names: sortedNames, requestFailed };
+}
+
+async function populateClassOptions() {
   const select = document.getElementById("className");
   if (!select) return;
 
-  const currentValue = normalizeClassName(select.value || state.className || "Năm 5");
-  const classes = getAvailableClasses();
-
+  const currentValue = normalizeClassName(select.value || state.className || "");
+  select.disabled = true;
   select.replaceChildren();
+
+  const loading = document.createElement("option");
+  loading.value = "";
+  loading.textContent = "Đang tải danh sách lớp...";
+  select.appendChild(loading);
+
+  const localClasses = [1, 2, 3, 4, 5, 6].flatMap(getAvailableClasses);
+  const sheetNames = await getSpreadsheetSheetNames();
+  const classes = [...new Set([
+    ...localClasses,
+    ...sheetNames.map(normalizeClassName).filter(Boolean)
+  ])].sort((a, b) => a.localeCompare(b, "vi", { numeric: true }));
+
+  if (!select.isConnected) return;
+  select.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = classes.length ? "-- Chọn lớp --" : "Chưa có lớp";
+  select.appendChild(placeholder);
 
   classes.forEach(name => {
     const option = document.createElement("option");
@@ -156,16 +324,162 @@ function populateClassOptions() {
     select.appendChild(option);
   });
 
+  select.disabled = classes.length === 0;
   if (classes.includes(currentValue)) {
     select.value = currentValue;
     state.className = currentValue;
-  } else if (classes.includes("Năm 5")) {
-    select.value = "Năm 5";
-    state.className = "Năm 5";
-  } else if (classes.length > 0) {
-    select.value = classes[0];
-    state.className = classes[0];
+    state.grade = getGradeNumber(currentValue) || state.grade;
+    await populateStudentOptions(currentValue);
+  } else {
+    select.value = "";
+    state.className = "";
+    await populateStudentOptions("");
   }
+}
+
+function parseCSV(text) {
+  const firstLine = text.split(/\r?\n/, 1)[0] || "";
+  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ";" : ",";
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === '"' && quoted && text[i + 1] === '"') {
+      cell += '"';
+      i++;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === delimiter && !quoted) {
+      row.push(cell.trim());
+      cell = "";
+    } else if ((char === "\n" || char === "\r") && !quoted) {
+      if (char === "\r" && text[i + 1] === "\n") i++;
+      row.push(cell.trim());
+      if (row.some(value => value !== "")) rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += char;
+    }
+  }
+
+  row.push(cell.trim());
+  if (row.some(value => value !== "")) rows.push(row);
+  return rows;
+}
+
+function normalizeHeader(value) {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function importStudentCSV(text) {
+  const rows = parseCSV(text.replace(/^\uFEFF/, ""));
+  if (rows.length < 2) throw new Error("Tệp không có dữ liệu học sinh.");
+
+  const headers = rows[0].map(normalizeHeader);
+  const classIndex = headers.findIndex(header => ["class", "classname", "lop", "tenlop"].includes(header));
+  const nameIndex = headers.findIndex(header => ["fullname", "name", "studentname", "hoten", "hovaten", "tenhocsinh"].includes(header));
+  if (classIndex < 0 || nameIndex < 0) {
+    throw new Error("Không tìm thấy cột lớp và họ tên. Hãy đặt tiêu đề là Lớp và Họ tên.");
+  }
+
+  const importedStudents = rows.slice(1)
+    .map(row => ({
+      className: normalizeClassName(row[classIndex] || ""),
+      fullName: String(row[nameIndex] || "").trim()
+    }))
+    .filter(student => student.className && student.fullName);
+
+  if (!importedStudents.length) throw new Error("Không có dòng nào chứa đủ thông tin lớp và họ tên.");
+
+  let previousDb = null;
+  try {
+    previousDb = JSON.parse(localStorage.getItem("tinHocStudentData_v1") || "null");
+  } catch (error) {
+    console.warn("Không thể đọc dữ liệu học sinh cũ:", error);
+  }
+
+  const previousStudents = Array.isArray(previousDb?.students) ? previousDb.students : [];
+  const mergedStudents = [...previousStudents];
+  importedStudents.forEach((student, index) => {
+    const existingIndex = mergedStudents.findIndex(saved =>
+      normalizeClassName(saved?.className) === student.className &&
+      String(saved?.fullName || "").trim().toLocaleLowerCase("vi") === student.fullName.toLocaleLowerCase("vi")
+    );
+    if (existingIndex >= 0) {
+      mergedStudents[existingIndex] = {
+        ...mergedStudents[existingIndex],
+        fullName: student.fullName,
+        className: student.className
+      };
+    } else {
+      mergedStudents.push({
+        studentId: `CSV${Date.now()}-${index + 1}`,
+        fullName: student.fullName,
+        className: student.className,
+        grade: 5,
+        exams: []
+      });
+    }
+  });
+
+  const db = {
+    ...(previousDb && typeof previousDb === "object" ? previousDb : {}),
+    version: previousDb?.version || "1.0",
+    classInfo: { ...(previousDb?.classInfo || {}), name: importedStudents[0].className, grade: 5, description: "Dữ liệu nhập từ Excel" },
+    students: mergedStudents
+  };
+  localStorage.setItem("tinHocStudentData_v1", JSON.stringify(db));
+  localStorage.setItem("tinHocClasses_v1", JSON.stringify([...new Set(mergedStudents.map(student => normalizeClassName(student?.className)).filter(Boolean))]));
+  return importedStudents.length;
+}
+
+async function populateStudentOptions(className = document.getElementById("className")?.value || "") {
+  const select = document.getElementById("studentName");
+  const classSelect = document.getElementById("className");
+  if (!select || !classSelect) return;
+
+  const selectedClass = normalizeClassName(className);
+  select.replaceChildren();
+
+  const loading = document.createElement("option");
+  loading.value = "";
+  loading.textContent = selectedClass ? "Đang tải danh sách học sinh..." : "Trước tiên hãy chọn lớp";
+  select.appendChild(loading);
+  select.disabled = true;
+  if (!selectedClass) return;
+
+  const result = await getStudentNamesForClass(selectedClass);
+  if (!select.isConnected || normalizeClassName(classSelect.value) !== selectedClass) return;
+
+  const { names, requestFailed } = result;
+  select.replaceChildren();
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = names.length
+    ? "-- Chọn học sinh --"
+    : requestFailed
+      ? "Không kết nối được nguồn dữ liệu học sinh"
+      : "-- Lớp chưa có dữ liệu học sinh --";
+  select.appendChild(placeholder);
+
+  names.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    select.appendChild(option);
+  });
+
+  select.disabled = names.length === 0;
 }
 
 window.addEventListener("storage", event => {
@@ -210,7 +524,7 @@ function renderIntro() {
 
             <div>
               <label>Họ và Tên Dũng Sĩ <span style="color:#f44336;">*</span></label>
-              <input id="studentName" type="text" placeholder="Nhập họ và tên của em..." required>
+              <select id="studentName" required></select>
             </div>
 
             <div id="startError"></div>
@@ -224,19 +538,30 @@ function renderIntro() {
 
   populateClassOptions();
 
+  document.getElementById("className").onchange = event => {
+    state.className = normalizeClassName(event.target.value);
+    state.grade = getGradeNumber(state.className) || state.grade;
+    state.name = "";
+    populateStudentOptions(state.className);
+  };
+
+  document.getElementById("studentName").onchange = event => {
+    state.name = event.target.value.trim();
+  };
+
   document.getElementById("startForm").onsubmit = event => {
     event.preventDefault();
     const name = document.getElementById("studentName").value.trim();
     const className = document.getElementById("className").value.trim();
     const errorBox = document.getElementById("startError");
 
-    if (!name) {
-      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng nhập họ và tên của em!</div>`;
+    if (!className) {
+      errorBox.innerHTML = `<div class="error-msg">⚠️ Chưa có dữ liệu lớp. Vui lòng kiểm tra dữ liệu Excel đã được nhập vào hệ thống!</div>`;
       return;
     }
 
-    if (!className) {
-      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng chọn lớp!</div>`;
+    if (!name) {
+      errorBox.innerHTML = `<div class="error-msg">⚠️ Vui lòng chọn học sinh trong lớp đã chọn!</div>`;
       return;
     }
 
@@ -866,8 +1191,8 @@ function saveResult() {
       version: "1.0",
       classInfo: {
         name: state.className || "Năm 5",
-        grade: 5,
-        description: "Lớp Tin học nâng cao khối 5"
+        grade: state.grade,
+        description: `Lớp Tin học nâng cao khối ${state.grade}`
       },
       students: []
     };
@@ -880,8 +1205,8 @@ function saveResult() {
   db.classInfo = {
     ...(db.classInfo || {}),
     name: normalizeClassName(state.className) || "Năm 5",
-    grade: 5,
-    description: "Lớp Tin học nâng cao khối 5"
+    grade: state.grade,
+    description: `Lớp Tin học nâng cao khối ${state.grade}`
   };
 
   let student = db.students.find(
@@ -893,7 +1218,7 @@ function saveResult() {
       studentId: "HS" + String(Date.now()).slice(-6),
       fullName: state.name,
       className: normalizeClassName(state.className) || "Năm 5",
-      grade: 5,
+      grade: state.grade,
       gender: state.gender,
       exams: []
     };
